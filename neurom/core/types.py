@@ -43,17 +43,7 @@ class NeuriteIter(OrderedEnum):
     # https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
     NRN = 2
 
-
-@unique
-class NeuriteType(OrderedEnum):
-    '''Enum representing valid tree types'''
-    undefined = 1
-    soma = 2
-    axon = 3
-    basal_dendrite = 4
-    apical_dendrite = 5
-    all = 32
-
+from python_brion import SectionType as NeuriteType
 
 NEURITES = (NeuriteType.all,
             NeuriteType.axon,
@@ -94,7 +84,7 @@ def tree_type_checker(*ref):
 
 def dendrite_filter(n):
     '''Select only dendrites'''
-    return n.type == NeuriteType.basal_dendrite or n.type == NeuriteType.apical_dendrite
+    return n.type == NeuriteType.basal_dendrite or n.type == NeuriteType.apical_dendrite or n.type == NeuriteType.dendrite
 
 
 def axon_filter(n):
