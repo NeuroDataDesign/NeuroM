@@ -307,3 +307,8 @@ def test_segment_radial_distances():
     assert_allclose(radial_distances,
                     (2.5, sqrt(2.5**2 + 5**2), sqrt(3**2 + 5**2),
                      2.0, 5.0, sqrt(2.5**2 + 4**2)))
+
+def test_principal_direction_extents():
+    principal_dir = list(_nf.principal_direction_extents(SIMPLE))
+    assert_allclose(principal_dir,
+                    (14.736052694538641, 12.105102672688004))

@@ -62,12 +62,6 @@ def test_iter_neurites_default():
                           [n for n in core.iter_neurites(POP)])
 
 
-def test_iter_neurites_nrn_order():
-    assert_sequence_equal(list(core.iter_neurites(REVERSED_NEURITES,
-                                                  neurite_order=NeuriteIter.NRN)),
-                          reversed(list(core.iter_neurites(REVERSED_NEURITES))))
-
-
 def test_iter_neurites_filter():
 
     for ntyp in nm.NEURITE_TYPES:
@@ -77,10 +71,8 @@ def test_iter_neurites_filter():
 
 
 def test_iter_neurites_mapping():
-
-    n = [n for n in core.iter_neurites(POP, mapfun=lambda n: len(n.points))]
-    ref = [211, 211, 211, 211, 211, 211, 211, 211, 211, 500, 500, 500]
-    assert_sequence_equal(n, ref)
+    assert_sequence_equal(list(core.iter_neurites(POP, mapfun=lambda n: len(n.points))),
+                          [211, 211, 211, 211, 211, 211, 211, 211, 211, 500, 500, 500])
 
 
 def test_iter_neurites_filter_mapping():
