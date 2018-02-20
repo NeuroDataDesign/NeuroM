@@ -43,15 +43,14 @@ class NeuriteIter(OrderedEnum):
     # https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
     NRN = 2
 
-from python_brion import SectionType as NeuriteType
+from python_morphio import SectionType as NeuriteType
 
 NeuriteType.name = property(lambda self: str(self).split('.')[-1])
 
 
-NEURITES = (NeuriteType.all,
-            NeuriteType.axon,
-            NeuriteType.basal_dendrite,
-            NeuriteType.apical_dendrite)
+NEURITES = (NeuriteType.axon,
+            NeuriteType.apical_dendrite,
+            NeuriteType.basal_dendrite)
 
 ROOT_ID = -1
 
@@ -63,31 +62,33 @@ def tree_type_checker(*ref):
         Functor that takes a tree, and returns true if that tree matches any of
         NeuriteTypes in ref
 
+        tree_type_checker(None) returns an always True functor
+
+
     Ex:
         >>> from neurom.core.types import NeuriteType, tree_type_checker
         >>> tree_filter = tree_type_checker(NeuriteType.axon, NeuriteType.basal_dendrite)
         >>> nrn.i_neurites(tree.isegment, tree_filter=tree_filter)
     '''
-    ref = tuple(ref)
-    if NeuriteType.all in ref:
-        def check_tree_type(_):
-            '''Always returns true'''
-            return True
-    else:
-        def check_tree_type(tree):
-            '''Check whether tree has the same type as ref
 
-            Returns:
-                True if ref in the same type as tree.type or ref is NeuriteType.all
-            '''
-            return tree.type in ref
+    if ref == (None,):
+        return lambda x: True
+
+    ref = tuple(ref)
+    def check_tree_type(tree):
+        '''Check whether tree has the same type as ref
+
+        Returns:
+            True if ref in the same type as tree.type or ref is NeuriteType.all
+        '''
+        return tree.type in ref
 
     return check_tree_type
 
 
 def dendrite_filter(n):
     '''Select only dendrites'''
-    return n.type == NeuriteType.basal_dendrite or n.type == NeuriteType.apical_dendrite or n.type == NeuriteType.dendrite
+    return n.type == NeuriteType.basal_dendrite or n.type == NeuriteType.apical_dendrite
 
 
 def axon_filter(n):

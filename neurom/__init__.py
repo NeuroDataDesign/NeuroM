@@ -69,8 +69,3 @@ APICAL_DENDRITE = NeuriteType.apical_dendrite
 BASAL_DENDRITE = NeuriteType.basal_dendrite
 AXON = NeuriteType.axon
 SOMA = NeuriteType.soma
-ANY_NEURITE = NeuriteType.all
-
-# prevent 'No handlers could be found for logger ...' errors
-# https://pythonhosted.org/logutils/libraries.html
-_logging.getLogger(__name__).addHandler(_logging.NullHandler())
