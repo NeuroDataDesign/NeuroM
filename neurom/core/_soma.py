@@ -31,10 +31,10 @@ import logging
 import math
 
 import numpy as np
+
 from neurom import morphmath
 from neurom.core.dataformat import COLS
 from neurom.exceptions import SomaError
-
 from python_morphio import MorphologyVersion
 
 
@@ -48,9 +48,9 @@ class Soma(object):
     and provides iterator access to them.
     '''
 
-    def __init__(self, points):
+    def __init__(self, points, radius=0):
         self._points = points
-        self.radius = 0
+        self.radius = radius
 
     @property
     def center(self):
@@ -65,6 +65,14 @@ class Soma(object):
     def points(self):
         '''Get the set of (x, y, z, r) points this soma'''
         return self._points[:, COLS.XYZR]
+
+    def transform(self, trans):
+        '''Return a copy of this neurite with a 3D transformation applied'''
+        clone = Soma(np.copy(self.points), radius=self.radius)
+        clone.points[:, COLS.XYZ] = trans(clone.points[:, COLS.XYZ])
+        return clone
+
+
 
 
 class SomaSinglePoint(Soma):
@@ -217,13 +225,8 @@ def _get_type(points, soma_class):
         return {0: None,
                 1: SomaSinglePoint,
                 2: None}.get(npoints, SomaSimpleContour)
-<<<<<<< HEAD
-=======
     elif soma_class == SOMA_CYLINDER:
-        if(npoints == 3 and
-           points[0][COLS.P] == -1 and
-           points[1][COLS.P] == 1 and
-           points[2][COLS.P] == 1):
+        if(npoints == 3):
             L.warning('Using neuromorpho 3-Point soma')
             # NeuroMorpho is the main provider of morphologies. As they
             # use SWC as their default file format, they convert all
@@ -232,7 +235,6 @@ def _get_type(points, soma_class):
             #  http://neuromorpho.org/SomaFormat.html
 
             return SomaNeuromorphoThreePointCylinders
->>>>>>> Success in all tests of: neurom/core/tests/
 
     if(npoints == 3 and
        points[0][COLS.P] == -1 and
