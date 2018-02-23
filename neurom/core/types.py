@@ -43,7 +43,7 @@ class NeuriteIter(OrderedEnum):
     # https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
     NRN = 2
 
-from python_morphio import SectionType as NeuriteType
+from morphio import SectionType as NeuriteType
 
 NeuriteType.name = property(lambda self: str(self).split('.')[-1])
 
