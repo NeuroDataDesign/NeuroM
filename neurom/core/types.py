@@ -28,22 +28,8 @@
 
 '''Type enumerations'''
 
-from enum import unique
 
-from neurom.utils import OrderedEnum
-
-
-@unique
-class NeuriteIter(OrderedEnum):
-    '''Neurite iteration orders'''
-    FileOrder = 1  # Order in which neurites appear in the file
-
-    # NRN simulator order: soma -> axon -> basal -> apical
-    # Coming from:
-    # https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
-    NRN = 2
-
-from morphio import SectionType as NeuriteType
+from neurom import NeuriteType
 
 NeuriteType.name = property(lambda self: str(self).split('.')[-1])
 
@@ -75,6 +61,7 @@ def tree_type_checker(*ref):
         return lambda x: True
 
     ref = tuple(ref)
+
     def check_tree_type(tree):
         '''Check whether tree has the same type as ref
 
