@@ -179,8 +179,9 @@ def plot_neuron(ax, nrn,
         color(str or None): Color of plotted values, None corresponds to default choice
         alpha(float): Transparency of plotted values
     '''
-    plot_soma(ax, nrn.soma, plane=plane, soma_outline=soma_outline, linewidth=linewidth,
-              color=color, alpha=alpha)
+    if nrn.soma.points:
+        plot_soma(ax, nrn.soma, plane=plane, soma_outline=soma_outline, linewidth=linewidth,
+                  color=color, alpha=alpha)
 
     for neurite in iter_neurites(nrn, filt=tree_type_checker(neurite_type)):
         plot_tree(ax, neurite, plane=plane,

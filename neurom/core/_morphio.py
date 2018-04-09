@@ -27,7 +27,7 @@ class MorphioNeuron(Neuron):
         '''Create a MorphIO neuron'''
         morphology = Morphology(handle)
         neurites = [Neurite(_section_builder(root_node))
-                    for root_node in morphology.rootSections]
+                    for root_node in morphology.root_sections]
 
         brain_soma = morphology.soma
         soma_points = np.concatenate((brain_soma.points,
