@@ -300,6 +300,7 @@ class Neuron(object):
         self.soma = soma
         self.name = name
         self.neurites = neurites
+        self.annotations = None
 
     def __str__(self):
         return 'Neuron <soma: %s, n_neurites: %d>' % \
@@ -313,8 +314,7 @@ class Neuron(object):
     @property
     def points(self):
         '''Return unordered array with all the points in this neuron (soma and neurites)'''
-        return np.vstack([self.soma.points]+[neurite.points for neurite in self.neurites])
-
+        return np.vstack([self.soma.points] + [neurite.points for neurite in self.neurites])
 
     def transform(self, trans):
         '''Return a copy of this neuron with a 3D transformation applied'''

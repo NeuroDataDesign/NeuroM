@@ -35,9 +35,10 @@ class MorphioNeuron(Neuron):
                                      axis=1)
 
         if soma_points.size:
-            soma = make_soma(morphology.somaType, soma_points)
+            soma = make_soma(morphology.soma_type, soma_points)
         else:
             soma = Soma(points=np.empty((0, 4)))
         super(MorphioNeuron, self).__init__(soma=soma,
                                             name=name or 'Neuron',
                                             neurites=neurites)
+        self.annotations = morphology.annotations

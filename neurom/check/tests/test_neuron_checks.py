@@ -408,3 +408,21 @@ def test__bool__():
     c = check.CheckResult(status=True)
     nt.ok_(c.__nonzero__())
     nt.eq_(c.__bool__(), c.__nonzero__())
+
+
+def test_has_single_children():
+    nrn = load_neuron(('asc', """
+( (Color Blue)
+  (Axon)
+  (0 5 0 2)
+  (2 9 0 2)
+  (0 13 0 2)
+  (
+    (2 13 0 2)
+    (4 13 0 2)
+    (6 13 0 2)
+  )
+)
+"""))
+
+    nt.ok_(not nrn_chk.has_no_single_children(nrn).status)

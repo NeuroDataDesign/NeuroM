@@ -44,6 +44,8 @@ from neurom.core.dataformat import COLS
 from neurom.features import neuritefunc as _nf
 from neurom.morphmath import section_length, segment_length
 
+from morphio import AnnotationType
+
 
 def _read_neurite_type(neurite):
     '''Simply read the stored neurite type'''
@@ -334,4 +336,11 @@ def has_no_narrow_neurite_section(neuron,
 
     bad_ids = [(section.id, section.points[1])
                for section in considered_sections if narrow_section(section)]
+    return CheckResult(len(bad_ids) == 0, bad_ids)
+
+
+def has_no_single_children(neuron):
+    bad_ids = [annot.section_id for annot in neuron.annotations
+               if annot.type == AnnotationType.single_child]
+
     return CheckResult(len(bad_ids) == 0, bad_ids)
