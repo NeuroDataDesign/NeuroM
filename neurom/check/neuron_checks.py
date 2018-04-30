@@ -340,7 +340,15 @@ def has_no_narrow_neurite_section(neuron,
 
 
 def has_no_single_children(neuron):
-    bad_ids = [annot.section_id for annot in neuron.annotations
-               if annot.type == AnnotationType.single_child]
+
+    single_child_annotations = (annot for annot in neuron.annotations
+                                if annot.type == AnnotationType.single_child)
+
+    def first_annotated_point(annotation):
+        '''Return the first annotated 4D-point [X,Y,Z,Radius]'''
+        return [annotation.points[0] + [annotation.diameters[0] / 2]]
+
+    bad_ids = [(annot.section_id, first_annotated_point(annot))
+               for annot in single_child_annotations]
 
     return CheckResult(len(bad_ids) == 0, bad_ids)
