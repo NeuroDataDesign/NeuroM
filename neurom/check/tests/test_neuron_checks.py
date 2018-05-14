@@ -395,13 +395,19 @@ def test_has_no_narrow_dendritic_section():
 
 
 def test_has_no_dangling_branch():
-    _, nrn = _load_neuron('dangling_axon.swc')
+    nrn = load_neuron(os.path.join(SWC_PATH, 'dangling_axon.swc'))
     res = nrn_chk.has_no_dangling_branch(nrn)
-    nt.ok_(not nrn_chk.has_no_dangling_branch(nrn).status)
+    nt.ok_(not res.status)
+    nt.assert_equal(len(res.info), 1)
+    assert_array_equal(res.info[0][1][0][COLS.XYZ],
+                       [0., 50.,  0.])
 
-    _, nrn = _load_neuron('dangling_dendrite.swc')
+    nrn = load_neuron(os.path.join(SWC_PATH, 'dangling_dendrite.swc'))
     res = nrn_chk.has_no_dangling_branch(nrn)
-    nt.ok_(not nrn_chk.has_no_dangling_branch(nrn).status)
+    nt.ok_(not res.status)
+    nt.assert_equal(len(res.info), 1)
+    assert_array_equal(res.info[0][1][0][COLS.XYZ],
+                       [0., 50.,  0.])
 
 
 def test__bool__():
