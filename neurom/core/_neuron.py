@@ -34,7 +34,7 @@ from itertools import chain
 import numpy as np
 
 from neurom._compat import filter, map, zip
-from neurom.core._soma import Soma
+from neurom.core._soma import Soma, make_soma
 from neurom.core.dataformat import COLS
 from neurom.utils import memoize
 
@@ -259,6 +259,20 @@ class Neuron(morphio.mut.Morphology):
     def __init__(self, handle, name=None):
         super(Neuron, self).__init__(handle)
         self.name = name if name else 'Neuron'
+        morphio_soma = super(Neuron, self).soma
+
+        if morphio_soma.points.size:
+            self.neurom_soma = make_soma(self.soma_type, morphio_soma.points)
+        else:
+            self.neurom_soma = Soma(points=np.empty((0, 4)))
+
+    @property
+    def soma(self):
+        return self.neurom_soma
+
+    @soma.setter
+    def soma(self, value):
+        self.neurom_soma = value
 
     def __str__(self):
         return 'Neuron <soma: %s, n_neurites: %d>' % \

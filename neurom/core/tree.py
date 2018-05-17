@@ -135,8 +135,8 @@ class Section(object):
 
     @points.setter
     def points(self, value):
-        self.morphio_section.points = value[:, COLS.XYZ]
-        self.morphio_section.diameters = value[:, COLS.R] * 2
+        self.morphio_section.points = np.copy(value[:, COLS.XYZ])
+        self.morphio_section.diameters = np.copy(value[:, COLS.R]) * 2
 
     @property
     def type(self):

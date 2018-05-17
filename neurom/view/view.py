@@ -179,7 +179,7 @@ def plot_neuron(ax, nrn,
         color(str or None): Color of plotted values, None corresponds to default choice
         alpha(float): Transparency of plotted values
     '''
-    if nrn.soma.points:
+    if nrn.soma.points.size:
         plot_soma(ax, nrn.soma, plane=plane, soma_outline=soma_outline, linewidth=linewidth,
                   color=color, alpha=alpha)
 
