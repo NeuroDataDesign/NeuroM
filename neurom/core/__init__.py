@@ -28,9 +28,9 @@
 
 ''' Core functionality and data types of NeuroM '''
 
-from .tree import Tree
+from .tree import Tree, Section
 from .types import NeuriteType
 from ._soma import Soma, SomaError
-from ._neuron import (Section, Neurite, Neuron, iter_neurites,
+from ._neuron import (Neurite, Neuron, iter_neurites,
                       iter_sections, iter_segments, graft_neuron)
 from .population import Population

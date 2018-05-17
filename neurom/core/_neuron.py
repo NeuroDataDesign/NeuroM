@@ -33,13 +33,12 @@ from itertools import chain
 
 import numpy as np
 
-from neurom import morphmath
 from neurom._compat import filter, map, zip
 from neurom.core._soma import Soma
 from neurom.core.dataformat import COLS
 from neurom.utils import memoize
 
-from . import NeuriteType, Tree
+from . import NeuriteType, Tree, Section
 
 # NRN simulator iteration order
 # See:
@@ -156,58 +155,16 @@ def graft_neuron(root_section):
     return Neuron(soma=Soma(root_section.points[:1]), neurites=[Neurite(root_section)])
 
 
-class Section(Tree):
-    '''Class representing a neurite section'''
-
-    def __init__(self, points, section_id=None, section_type=NeuriteType.undefined):
-        super(Section, self).__init__()
-        self.id = section_id
-        self.points = points
-        self.type = section_type
-
-    @property
-    @memoize
-    def length(self):
-        '''Return the path length of this section.'''
-        return morphmath.section_length(self.points)
-
-    @property
-    @memoize
-    def area(self):
-        '''Return the surface area of this section.
-
-        The area is calculated from the segments, as defined by this
-        section's points
-        '''
-        return sum(morphmath.segment_area(s) for s in iter_segments(self))
-
-    @property
-    @memoize
-    def volume(self):
-        '''Return the volume of this section.
-
-        The volume is calculated from the segments, as defined by this
-        section's points
-        '''
-        return sum(morphmath.segment_volume(s) for s in iter_segments(self))
-
-    def __str__(self):
-        return 'Section(id=%s, type=%s, n_points=%s) <parent: %s, nchildren: %d>' % \
-            (self.id, self.type, len(self.points), self.parent, len(self.children))
-
-    __repr__ = __str__
-
-
 class Neurite(object):
     '''Class representing a neurite tree'''
 
-    def __init__(self, root_node):
-        self.root_node = root_node
-        self.type = root_node.type if hasattr(
-            root_node, 'type') else NeuriteType.undefined
+    def __init__(self, section_id, morphology):
+        self.section_id = section_id
+        self.type = morphology.section(self.section_id).type
+        self.root_node = Section(self.section_id, morphology)
 
     @property
-    @memoize
+    # @memoize
     def points(self):
         '''Return unordered array with all the points in this neurite
 
@@ -280,7 +237,7 @@ class Neurite(object):
         return bool(self.root_node)
 
     def __eq__(self, other):
-        return self.type == other.type and self.root_node == other.root_node
+        return self.type == other.type and self.section_id == other.section_id
 
     def __hash__(self):
         return hash((self.type, self.root_node))
@@ -293,28 +250,28 @@ class Neurite(object):
     __repr__ = __str__
 
 
-class Neuron(object):
+import morphio
+
+
+class Neuron(morphio.mut.Morphology):
     '''Class representing a simple neuron'''
 
-    def __init__(self, soma=None, neurites=None, name='Neuron'):
-        self.soma = soma
-        self.name = name
-        self.neurites = neurites
-        self.annotations = None
+    def __init__(self, handle, name=None):
+        super(Neuron, self).__init__(handle)
+        self.name = name if name else 'Neuron'
 
     def __str__(self):
         return 'Neuron <soma: %s, n_neurites: %d>' % \
             (self.soma, len(self.neurites))
 
     @property
+    def neurites(self):
+        return [Neurite(root_section, self) for root_section in self.root_sections]
+
+    @property
     def sections(self):
         '''Returns an array of all sections (excluding the soma)'''
         return list(iter_sections(self))
-
-    @property
-    def points(self):
-        '''Return unordered array with all the points in this neuron (soma and neurites)'''
-        return np.vstack([self.soma.points] + [neurite.points for neurite in self.neurites])
 
     def transform(self, trans):
         '''Return a copy of this neuron with a 3D transformation applied'''

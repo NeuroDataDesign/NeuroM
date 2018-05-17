@@ -27,25 +27,34 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''Generic tree class and iteration functions'''
+import numpy as np
 from collections import deque
 
 from neurom._compat import filter
 
+from neurom import morphmath
+from neurom.core.dataformat import COLS
 
-class Tree(object):
+
+class Section(object):
     '''Simple recursive tree class'''
-    def __init__(self):
-        self.parent = None
-        self.children = list()
 
-    def add_child(self, tree):
-        '''Add a child to the list of this tree's children
+    def __init__(self, section_id, morphology):
+        self.id = section_id
+        self.morphology = morphology
+        self.morphio_section = self.morphology.section(self.id)
 
-        This tree becomes the added tree's parent
-        '''
-        tree.parent = self
-        self.children.append(tree)
-        return tree
+    @property
+    def parent(self):
+        parent_id = self.morphology.parent(self.id)
+        if parent_id < 0:
+            return None
+        return Section(parent_id, self.morphology)
+
+    @property
+    def children(self):
+        return [Section(child_id, self.morphology) for child_id
+                in self.morphology.children(self.id)]
 
     def is_forking_point(self):
         '''Is tree a forking point?'''
@@ -117,3 +126,55 @@ class Tree(object):
         return bool(self.children)
 
     __bool__ = __nonzero__
+
+    @property
+    def points(self):
+        return np.concatenate((self.morphio_section.points,
+                               self.morphio_section.diameters[:, np.newaxis] / 2.),
+                              axis=1)
+
+    @points.setter
+    def points(self, value):
+        self.morphio_section.points = value[:, COLS.XYZ]
+        self.morphio_section.diameters = value[:, COLS.R] * 2
+
+    @property
+    def type(self):
+        return self.morphio_section.type
+
+    # TODO: Should we have a @type.setter ?
+
+    @property
+    #@memoize
+    def length(self):
+        '''Return the path length of this section.'''
+        return morphmath.section_length(self.points)
+
+    @property
+    #@memoize
+    def area(self):
+        '''Return the surface area of this section.
+
+        The area is calculated from the segments, as defined by this
+        section's points
+        '''
+        return sum(morphmath.segment_area(s) for s in iter_segments(self))
+
+    @property
+    #@memoize
+    def volume(self):
+        '''Return the volume of this section.
+
+        The volume is calculated from the segments, as defined by this
+        section's points
+        '''
+        return sum(morphmath.segment_volume(s) for s in iter_segments(self))
+
+    def __str__(self):
+        return 'Section(id=%s, type=%s, n_points=%s) <parent: %s, nchildren: %d>' % \
+            (self.id, self.type, len(self.points), self.parent, len(self.children))
+
+    __repr__ = __str__
+
+
+Tree = Section

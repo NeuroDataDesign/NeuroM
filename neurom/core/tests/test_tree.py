@@ -177,7 +177,6 @@ def test_upstream_iteration():
     nt.ok_(list(REF_TREE.children[0].children[1].iupstream()) ==
            [T112, T11, REF_TREE])
 
-
     nt.ok_(list(REF_TREE.children[1].iupstream()) == [T12, REF_TREE])
     nt.ok_(list(REF_TREE.children[1].children[0].iupstream()) ==
            [T121, T12, REF_TREE])

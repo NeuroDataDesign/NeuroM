@@ -37,7 +37,7 @@ import uuid
 from io import StringIO, open
 
 from neurom._compat import StringType, filter
-from neurom.core._morphio import MorphioNeuron
+from neurom.core._neuron import Neuron
 from neurom.core.population import Population
 from neurom.exceptions import MorphioError, NeuroMError
 
@@ -140,7 +140,7 @@ def load_neuron(handle):
         name = os.path.splitext(os.path.basename(handle))[0]
     else:
         name = None
-    return MorphioNeuron(_get_file(handle), name)
+    return Neuron(_get_file(handle), name)
 
 
 def load_neurons(neurons,
