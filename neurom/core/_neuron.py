@@ -34,6 +34,7 @@ from collections import deque
 from neurom._compat import filter
 
 from neurom import morphmath
+from neurom.core.types import NeuriteIter, NeuriteType
 from neurom.core.dataformat import COLS
 from copy import deepcopy
 from itertools import chain
@@ -203,6 +204,14 @@ class Section(object):
 
 Tree = Section
 
+# NRN simulator iteration order
+# See:
+# https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
+NRN_ORDER = {NeuriteType.soma: 0,
+             NeuriteType.axon: 1,
+             NeuriteType.basal_dendrite: 2,
+             NeuriteType.apical_dendrite: 3,
+             NeuriteType.undefined: 4}
 
 def iter_neurites(obj, mapfun=None, filt=None, neurite_order=NeuriteIter.FileOrder):
     '''Iterator to a neurite, neuron or neuron population

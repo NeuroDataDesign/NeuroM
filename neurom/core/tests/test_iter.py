@@ -49,6 +49,7 @@ NEURONS = [NRN1,
 TOT_NEURITES = sum(len(N.neurites) for N in NEURONS)
 
 SIMPLE = load_neuron(joinp(DATA_PATH, 'swc/simple.swc'))
+REVERSED_NEURITES = load_neuron(joinp(DATA_PATH, 'swc/ordering/reversed_NRN_neurite_order.swc'))
 
 POP = core.Population(NEURONS, name='foo')
 
@@ -58,14 +59,13 @@ def assert_sequence_equal(a, b):
 
 
 def test_iter_neurites_default():
-    assert_sequence_equal(SIMPLE.neurites,
-                          [n for n in core.iter_neurites(SIMPLE)])
-
-
-def test_iter_neurites_default():
     assert_sequence_equal(POP.neurites,
                           [n for n in core.iter_neurites(POP)])
 
+def test_iter_neurites_nrn_order():
+    assert_sequence_equal(list(core.iter_neurites(REVERSED_NEURITES,
+                                                  neurite_order=NeuriteIter.NRN)),
+                          reversed(list(core.iter_neurites(REVERSED_NEURITES))))
 
 def test_iter_neurites_filter():
     for ntyp in nm.NEURITE_TYPES:
@@ -79,7 +79,6 @@ def test_iter_neurites_mapping():
     # assert_sequence_equal(list(core.iter_neurites(POP,
     #                                               mapfun=lambda neurite: len(neurite.points))),
     #                       [211, 211, 211, 211, 211, 211, 211, 211, 211, 500, 500, 500])
-
 
 def test_iter_neurites_filter_mapping():
     n = [n for n in core.iter_neurites(POP,

@@ -66,7 +66,7 @@ from morphio import Morphology, MorphologyVersion, SomaType, SectionType as Neur
 
 from neurom.core.dataformat import COLS
 from .core import (iter_neurites, iter_sections, iter_segments) # graft_neuron
-from .core.types import NEURITES as NEURITE_TYPES
+from .core.types import NEURITES as NEURITE_TYPES, NeuriteIter
 from .features import get
 from .io.utils import NeuronLoader, load_neuron, load_neurons
 from .version import VERSION as __version__

@@ -27,11 +27,23 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''Type enumerations'''
+from enum import unique
 
 
 from neurom import NeuriteType
+from neurom.utils import OrderedEnum
 
 NeuriteType.name = property(lambda self: str(self).split('.')[-1])
+
+@unique
+class NeuriteIter(OrderedEnum):
+    '''Neurite iteration orders'''
+    FileOrder = 1  # Order in which neurites appear in the file
+
+    # NRN simulator order: soma -> axon -> basal -> apical
+    # Coming from:
+    # https://github.com/neuronsimulator/nrn/blob/2dbf2ebf95f1f8e5a9f0565272c18b1c87b2e54c/share/lib/hoc/import3d/import3d_gui.hoc#L874
+    NRN = 2
 
 
 NEURITES = (NeuriteType.axon,
