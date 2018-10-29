@@ -64,7 +64,7 @@ Examples:
 from morphio import Morphology, MorphologyVersion, SomaType, SectionType as NeuriteType
 
 
-from .core import (graft_neuron, iter_neurites, iter_sections, iter_segments)
+from .core import (iter_neurites, iter_sections, iter_segments) # graft_neuron
 from .core.types import NEURITES as NEURITE_TYPES
 from .features import get
 from .io.utils import NeuronLoader, load_neuron, load_neurons

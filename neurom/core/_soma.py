@@ -221,7 +221,6 @@ def make_soma(soma_type, points=None):
         SomaType.SOMA_SINGLE_POINT: SomaSinglePoint,
         SomaType.SOMA_CYLINDERS: SomaCylinders,
         SomaType.SOMA_NEUROMORPHO_THREE_POINT_CYLINDERS: SomaNeuromorphoThreePointCylinders,
-        SomaType.SOMA_THREE_POINTS: SomaThreePoint,
         SomaType.SOMA_SIMPLE_CONTOUR: SomaSimpleContour,
     }
 

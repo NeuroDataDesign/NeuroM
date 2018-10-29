@@ -149,19 +149,25 @@ def iter_segments(obj, neurite_filter=None, neurite_order=NeuriteIter.FileOrder)
                                for sec in sections)
 
 
-def graft_neuron(root_section):
-    '''Returns a neuron starting at root_section'''
-    assert isinstance(root_section, Section)
-    return Neuron(soma=Soma(root_section.points[:1]), neurites=[Neurite(root_section)])
+# def graft_neuron(root_section):
+#     '''Returns a neuron starting at root_section'''
+#     assert isinstance(root_section, Section)
+#     return Neuron(soma=Soma(root_section.points[:1]), neurites=[Neurite(root_section)])
 
 
 class Neurite(object):
     '''Class representing a neurite tree'''
 
-    def __init__(self, section_id, morphology):
-        self.section_id = section_id
-        self.type = morphology.section(self.section_id).type
-        self.root_node = Section(self.section_id, morphology)
+    def __init__(self, root_node):
+        self.morphio_root_node = root_node
+
+    @property
+    def root_node(self):
+        return Section(self.morphio_root_node)
+    
+    @property
+    def type(self):
+        return self.root_node.type
 
     @property
     # @memoize
@@ -171,10 +177,9 @@ class Neurite(object):
         Note: Duplicate points at section bifurcations are removed'''
 
         # Neurite first point must be added manually
-        _ptr = list(chain([self.root_node.points[0][COLS.XYZR]],
-
-                          [v for s in self.root_node.ipreorder()
-                           for v in s.points[1:, COLS.XYZR]]))
+        _ptr = list(chain([Section(self.morphio_root_node).points[0][COLS.XYZR]],
+                          [v for s in self.morphio_root_node.iter()
+                           for v in Section(s).points[1:, COLS.XYZR]]))
         return np.array(_ptr)
 
     @property
@@ -231,16 +236,16 @@ class Neurite(object):
 
     def __deepcopy__(self, memo):
         '''Deep copy of neurite object'''
-        return Neurite(deepcopy(self.root_node, memo))
+        return Neurite(deepcopy(self.morphio_root_node, memo))
 
     def __nonzero__(self):
-        return bool(self.root_node)
+        return bool(self.morphio_root_node)
 
     def __eq__(self, other):
-        return self.type == other.type and self.section_id == other.section_id
+        return self.type == other.type and self.morphio_root_node.id == other.morphio_root_node.id
 
     def __hash__(self):
-        return hash((self.type, self.root_node))
+        return hash((self.type, self.morphio_root_node))
 
     __bool__ = __nonzero__
 
@@ -260,9 +265,12 @@ class Neuron(morphio.mut.Morphology):
         super(Neuron, self).__init__(handle)
         self.name = name if name else 'Neuron'
         morphio_soma = super(Neuron, self).soma
+        soma_points = np.concatenate((morphio_soma.points,
+                                      morphio_soma.diameters[:, np.newaxis] / 2.),
+                                     axis=1)
 
         if morphio_soma.points.size:
-            self.neurom_soma = make_soma(self.soma_type, morphio_soma.points)
+            self.neurom_soma = make_soma(self.soma_type, soma_points)
         else:
             self.neurom_soma = Soma(points=np.empty((0, 4)))
 
@@ -276,16 +284,23 @@ class Neuron(morphio.mut.Morphology):
 
     def __str__(self):
         return 'Neuron <soma: %s, n_neurites: %d>' % \
-            (self.soma, len(self.neurites))
+            ('1', 2)
 
     @property
     def neurites(self):
-        return [Neurite(root_section, self) for root_section in self.root_sections]
+        return [Neurite(root_section) for root_section in self.root_sections]
 
     @property
     def sections(self):
         '''Returns an array of all sections (excluding the soma)'''
         return list(iter_sections(self))
+
+    @property
+    def points(self):
+        return np.concatenate(
+            [section.points for section in iter_sections(self)])
+
+
 
     def transform(self, trans):
         '''Return a copy of this neuron with a 3D transformation applied'''

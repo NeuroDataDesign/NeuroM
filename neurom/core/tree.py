@@ -39,22 +39,17 @@ from neurom.core.dataformat import COLS
 class Section(object):
     '''Simple recursive tree class'''
 
-    def __init__(self, section_id, morphology):
-        self.id = section_id
-        self.morphology = morphology
-        self.morphio_section = self.morphology.section(self.id)
+    def __init__(self, morphio_section):
+        self.id = morphio_section.id
+        self.morphio_section = morphio_section
 
     @property
     def parent(self):
-        parent_id = self.morphology.parent(self.id)
-        if parent_id < 0:
-            return None
-        return Section(parent_id, self.morphology)
+        return None if self.morphio_section.is_root else Section(self.morphio_section.parent)
 
     @property
     def children(self):
-        return [Section(child_id, self.morphology) for child_id
-                in self.morphology.children(self.id)]
+        return [Section(child) for child in self.morphio_section.children]
 
     def is_forking_point(self):
         '''Is tree a forking point?'''
