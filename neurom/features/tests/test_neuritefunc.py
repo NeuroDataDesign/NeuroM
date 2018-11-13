@@ -37,7 +37,6 @@ import neurom as nm
 from neurom.geom import convex_hull
 from neurom.features import neuritefunc as _nf
 from neurom.features.sectionfunc import section_volume
-from neurom.core import tree as tr
 from neurom.core import Section, Neurite, Population
 
 from utils import _close

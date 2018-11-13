@@ -64,6 +64,7 @@ Examples:
 from morphio import Morphology, MorphologyVersion, SomaType, SectionType as NeuriteType
 
 
+from neurom.core.dataformat import COLS
 from .core import (iter_neurites, iter_sections, iter_segments) # graft_neuron
 from .core.types import NEURITES as NEURITE_TYPES
 from .features import get
