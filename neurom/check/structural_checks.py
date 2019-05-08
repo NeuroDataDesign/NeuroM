@@ -37,7 +37,7 @@ def has_soma_points(neuron):
 
 def has_all_finite_radius_neurites(neuron, threshold=0.0):  # pylint: disable=unused-argument
     '''Check if has finite radius neurites'''
-    raise NotImplementedError("Should be reimplemented directly in Brion")
+    raise NotImplementedError("Should be reimplemented directly in MorphIO")
 
 
 def has_valid_soma(neuron):  # pylint: disable=unused-argument

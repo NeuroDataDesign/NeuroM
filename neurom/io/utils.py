@@ -184,7 +184,7 @@ def load_neurons(neurons,
 
     return population_class(pop, name=name)
 
-# TODO: embed this feature directly in Brion
+# TODO: embed this feature directly in morphio
 
 
 def _get_file(handle):

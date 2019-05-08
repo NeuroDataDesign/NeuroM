@@ -197,7 +197,7 @@ def test_has_all_nonzero_neurite_radii_threshold():
     nt.assert_equal(len(ids.info), 122)
 
 
-# TODO: decide wheter or not 1st neurite point should be soma point
+# TODO: decide whether or not 1st neurite point should be soma point
 # if not, then (1, 0) should not be part of the result
 def test_nonzero_neurite_radii_bad_data():
     nrn = NEURONS['Neuron_zero_radius.swc']

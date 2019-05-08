@@ -484,7 +484,6 @@ def _make_trace2d(neuron, plane, prefix='', opacity=1., force_color=None, visibl
     for neurite in iter_neurites(neuron):
         names[neurite.type] += 1
 
-
         if style and neurite in style and 'color' in style[neurite]:
             neurite_color = style[neurite]
         else:
@@ -505,13 +504,13 @@ def _make_trace2d(neuron, plane, prefix='', opacity=1., force_color=None, visibl
             for i, coord in enumerate('xyz'):
                 coords[coord] = list(chain.from_iterable((p1[i], p2[i], None) for p1, p2 in segs))
 
-
             coords = dict(x=coords[plane[0]], y=coords[plane[1]])
             lines.append(go.Scattergl(name=name, visible=visible, opacity=opacity,
                                       line=dict(color=colors, width=2),
                                       mode='lines',
                                       **coords))
     return lines
+
 
 def _make_trace(neuron, plane, prefix='', opacity=1., force_color=None, visible=True, style=None):
     '''Create the trace to be plotted'''
@@ -538,7 +537,8 @@ def _make_trace(neuron, plane, prefix='', opacity=1., force_color=None, visible=
 
             for i, coord in enumerate('xyz'):
                 if coord in plane:
-                    coords[coord] += list(chain.from_iterable((p1[i], p2[i], None) for p1, p2 in segs))
+                    coords[coord] += list(chain.from_iterable((p1[i], p2[i], None)
+                                                              for p1, p2 in segs))
                 else:
                     coords[coord] += list(chain.from_iterable((0, 0, None) for _ in segs))
 
@@ -595,7 +595,6 @@ def _make_pca(pca, center, plane, visible=True):
     return pca_axes
 
 
-
 class PlotBuilder:
     def __init__(self, neuron, plane, title, inline):
         self.title = title
@@ -606,8 +605,6 @@ class PlotBuilder:
         self.properties = defaultdict(dict)
         self.helper = PlotlyHelperPlane(self.title, self.plane)
 
-
-
     def color_section(self, section, color, recursive=False, index_offset=0):
         self.properties[section]['color'] = color
         if index_offset:
@@ -617,7 +614,8 @@ class PlotBuilder:
                 self.color_section(child, color, recursive=True, index_offset=0)
 
     def plot(self, *args, **kwargs):
-        self.helper.add_data({NEURON_NAME: _make_trace(self.neuron, self.helper.plane, style=self.properties)})
+        self.helper.add_data({NEURON_NAME: _make_trace(
+            self.neuron, self.helper.plane, style=self.properties)})
         self.helper.add_data({SOMA_NAME: _make_soma(self.neuron)})
         self.helper.add_plane_buttons()
         fig = self.helper.get_fig()
@@ -627,111 +625,8 @@ class PlotBuilder:
         plot_fun(fig, filename=self.title + '.html', *args, **kwargs)
         return fig
 
+
 def _plot_neuron(neuron, plane, title, inline, **kwargs):
     ''' Draw a neuron using plotly '''
     builder = PlotBuilder(neuron, plane, title, inline, **kwargs)
     return builder.plot()
-
-
-def _plot_pca(pcas, plane, title, global_rotation, inline, **kwargs):
-    ''' Draw the neuron, PCAs for wanted neurites and a neuron with rotated neurites '''
-    helper = PlotlyHelperPlane(title, plane)
-    helper.add_data({NEURON_NAME: _make_trace(pcas.neuron, helper.plane)})
-    helper.add_data({SOMA_NAME: _make_soma(pcas.neuron)})
-
-    pcas.run_pcas()
-    for pca in pcas:
-        helper.add_data({pca.name: _make_pca(pca, pca.res.center, helper.plane, visible=False)})
-        helper.add_data({' '.join([pca.name, CENTERED_SUFFIX]):
-                             _make_pca(pca, pca.neuron.soma.center, helper.plane, visible=False)})
-
-    aligned_neuron = _rotate_neuron_from_pcas(pcas.neuron, pcas, global_rotation)
-    rotated_list = list()
-    for pca in pcas:
-        rotated_list.append({'name': ' '.join([ROTATION_PREFIX, pca.name]),
-                             'group': pca.group, 'axis': pca.axis})
-    rotated_pcas = MultiPCA(aligned_neuron, rotated_list)
-    helper.add_data({NEURON_ROTATED_NAME: _make_trace(aligned_neuron, helper.plane,
-                                                      prefix=ROTATION_PREFIX, visible=False)})
-
-    rotated_pcas.run_pcas()
-    for rot_pca in rotated_pcas:
-        helper.add_data(
-            {rot_pca.name: _make_pca(rot_pca, rot_pca.res.center, helper.plane, visible=False)})
-        helper.add_data(
-            {' '.join([rot_pca.name, CENTERED_SUFFIX]): _make_pca(rot_pca,
-                                                                  rot_pca.neuron.soma.center,
-                                                                  helper.plane,
-                                                                  visible=False)})
-
-    helper.add_button('Original morphology', 'update',
-                      [{'visible': helper.get_visibility_map([NEURON_NAME, SOMA_NAME])}], 'object')
-
-    for pca in pcas:
-        viz = [NEURON_NAME, SOMA_NAME, pca.name]
-        helper.add_button(' '.join([pca.name, PCA_SUFFIX]), 'update',
-                          [{'visible': helper.get_visibility_map(viz)}], 'object')
-        viz_center = [NEURON_NAME, SOMA_NAME, ' '.join([pca.name, CENTERED_SUFFIX])]
-        helper.add_button(' '.join([pca.name, PCA_SUFFIX, CENTERED_SUFFIX]), 'update',
-                          [{'visible': helper.get_visibility_map(viz_center)}], 'object')
-
-    helper.add_button(' '.join([ROTATION_PREFIX, 'morphology']), 'update',
-                      [{'visible': helper.get_visibility_map([NEURON_ROTATED_NAME, SOMA_NAME])}],
-                      'object')
-
-    for rot_pca in rotated_pcas:
-        if rot_pca.axis is not None:
-            viz = [NEURON_ROTATED_NAME, SOMA_NAME, rot_pca.name]
-            helper.add_button(' '.join([rot_pca.name, PCA_SUFFIX]), 'update',
-                              [{'visible': helper.get_visibility_map(viz)}], 'object')
-            viz_center = [NEURON_ROTATED_NAME, SOMA_NAME, ' '.join([rot_pca.name, CENTERED_SUFFIX])]
-            helper.add_button(' '.join([rot_pca.name, PCA_SUFFIX, CENTERED_SUFFIX]), 'update',
-                              [{'visible': helper.get_visibility_map(viz_center)}], 'object')
-
-    helper.add_plane_buttons()
-    fig = helper.get_fig()
-    plot_fun = iplot if inline else plot
-    if inline:
-        init_notebook_mode(connected=True)  # pragma: no cover
-    plot_fun(fig, filename=title + '.html', **kwargs)
-    return fig
-
-
-def _plot_compare_neurons(neuron1, name1, color1, neuron2, name2,
-                          color2, plane, title, inline, draw, **kwargs):
-    ''' Function to plot on the same figure two neurons '''
-    helper = PlotlyHelperPlane(title, plane)
-    helper.add_data({name1: _make_trace(neuron1, helper.plane, force_color=color1, opacity=1)})
-    soma_name1 = ' '.join([name1, SOMA_NAME])
-    helper.add_data({soma_name1: _make_soma(neuron1)})
-    helper.add_data({name2: _make_trace(neuron2, helper.plane, force_color=color2, opacity=1)})
-    soma_name2 = ' '.join([name2, SOMA_NAME])
-    helper.add_data({soma_name2: _make_soma(neuron2)})
-
-    helper.add_button(name1, 'update',
-                      [{'visible': helper.get_visibility_map([name1, soma_name1])}])
-    helper.add_button(name2, 'update',
-                      [{'visible': helper.get_visibility_map([name2, soma_name2])}])
-    helper.add_button('Compare', 'update', [
-        {'visible': helper.get_visibility_map([name1, soma_name1, name2, soma_name2])}])
-
-    helper.add_plane_buttons()
-
-    fig = helper.get_fig()
-    if draw:
-        plot_fun = iplot if inline else plot
-        if inline:
-            init_notebook_mode(connected=True)  # pragma: no cover
-        plot_fun(fig, filename='Compare-neurons' + '.html', **kwargs)
-    return fig
-
-
-def _plot_pca_compare(neuron_ref, pcas, plane, global_rotation, inline, draw, **kwargs):
-    ''' Draw the neuron, PCAs for wanted neurites and a neuron with rotated neurites '''
-    pcas.run_pcas()
-    aligned_neuron = _rotate_neuron_from_pcas(pcas.neuron, pcas, global_rotation)
-    title = 'compare-neuron-with-pca'
-    return _plot_compare_neurons(neuron_ref, 'Reference', 'blue',
-                                 aligned_neuron, 'PCA rotations', 'red',
-                                 plane, title, inline, draw, **kwargs)
->>>>>>> Migrate to MorphIO 2.0
