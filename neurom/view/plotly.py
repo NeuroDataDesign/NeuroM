@@ -434,11 +434,8 @@ class PCA(object):
             Returns:
                 group (list of int) : all neurites coresponding to the neuron_type
         '''
-        group = list()
-        for i, neurite in enumerate(self.neuron.neurites):
-            if neurite.type == neuron_type or neuron_type == NeuriteType.all:
-                group.append(i)
-        return group
+        return [i for i, neurite in enumerate(self.neuron.neurites)
+                if neurite.type == neuron_type or neuron_type is None]
 
     def _sanitize_group(self, group):
         ''' Check the group value. Must be an int or a list of ints '''

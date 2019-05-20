@@ -35,7 +35,7 @@ from neurom.core.types import (NEURITES, NeuriteType, axon_filter,
 
 
 def test_tree_type_checker():
-    # check that when NeuriteType.all, we accept all trees, w/o checking type
+    # check that when None, we accept all trees, w/o checking type
     tree_filter = tree_type_checker(None)
     nt.ok_(tree_filter('fake_tree'))
 

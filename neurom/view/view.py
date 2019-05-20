@@ -27,6 +27,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''visualize morphologies'''
 
+import numpy as np
 from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Circle
 from mpl_toolkits.mplot3d.art3d import \
@@ -161,7 +162,7 @@ def plot_soma(ax, soma, plane='xy',
 
 # pylint: disable=too-many-arguments
 def plot_neuron(ax, nrn,
-                neurite_type=NeuriteType.all,
+                neurite_type=None,
                 plane='xy',
                 soma_outline=True,
                 diameter_scale=_DIAMETER_SCALE, linewidth=_LINEWIDTH,
@@ -257,7 +258,7 @@ def plot_soma3d(ax, soma, color=None, alpha=_ALPHA):
     _update_3d_datalim(ax, soma)
 
 
-def plot_neuron3d(ax, nrn, neurite_type=NeuriteType.all,
+def plot_neuron3d(ax, nrn, neurite_type=None,
                   diameter_scale=_DIAMETER_SCALE, linewidth=_LINEWIDTH,
                   color=None, alpha=_ALPHA):
     '''

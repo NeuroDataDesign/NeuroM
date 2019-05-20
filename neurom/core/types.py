@@ -69,7 +69,8 @@ def tree_type_checker(*ref):
         >>> nrn.i_neurites(tree.isegment, tree_filter=tree_filter)
     '''
 
-    if ref == (None,):
+    # Cannot do the following with pybind enum: ref == (None, )
+    if len(ref) == 1 and ref[0] is None:
         return lambda x: True
 
     ref = tuple(ref)
@@ -78,7 +79,7 @@ def tree_type_checker(*ref):
         '''Check whether tree has the same type as ref
 
         Returns:
-            True if ref in the same type as tree.type or ref is NeuriteType.all
+            True if ref in the same type as tree.type
         '''
         return tree.type in ref
 
