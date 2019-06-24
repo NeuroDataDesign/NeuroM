@@ -114,16 +114,6 @@ def test_dendrogram():
         np.testing.assert_allclose(ax.get_xlim(), (-20., 100.), rtol=0.25)
 
 
-def test_one_point_branch():
-    test_section = Section(points=np.array([[1., 1., 1., 0.5, 2, 1, 0]]))
-    for diameter_scale, linewidth in it.product((1.0, None),
-                                                (0.0, 1.2)):
-        with get_fig_2d() as (fig, ax):
-            view.plot_tree(ax, test_section, diameter_scale=diameter_scale, linewidth=linewidth)
-        with get_fig_3d() as (fig, ax):
-            view.plot_tree3d(ax, test_section, diameter_scale=diameter_scale, linewidth=linewidth)
-
-
 soma0 = fst_neuron.soma
 
 # upright, varying radius
