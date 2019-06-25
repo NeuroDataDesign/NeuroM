@@ -54,16 +54,6 @@ def _load_neuron(name):
     return name, load_neuron(path)
 
 
-def _make_monotonic(neuron):
-    for neurite in neuron.neurites:
-        for node in neurite.iter_sections():
-            sec = node.points
-            if node.parent is not None:
-                sec[0][COLS.R] = node.parent.points[-1][COLS.R] / 2.
-            for point_id in range(len(sec) - 1):
-                sec[point_id + 1][COLS.R] = sec[point_id][COLS.R] / 2.
-
-
 def _make_flat(neuron):
 
     class Flattenizer(object):
@@ -161,17 +151,6 @@ def test_has_no_flat_neurites():
 
     # nt.assert_false(nrn_chk.has_no_flat_neurites(n, 1e-6, method='tolerance'))
     # nt.assert_false(nrn_chk.has_no_flat_neurites(n, 0.1, method='ratio'))
-
-
-def test_has_all_monotonic_neurites():
-
-    _, n = _load_neuron('Neuron.swc')
-
-    nt.assert_false(nrn_chk.has_all_monotonic_neurites(n))
-
-    _make_monotonic(n)
-
-    nt.assert_true(nrn_chk.has_all_monotonic_neurites(n))
 
 
 def test_nonzero_neurite_radii_good_data():

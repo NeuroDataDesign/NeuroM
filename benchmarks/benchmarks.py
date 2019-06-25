@@ -140,9 +140,6 @@ class TimeChecks:
     def time_has_no_flat_neurites(self):
         nc.has_no_flat_neurites(self.neuron, tol=0.1, method='ratio')
 
-    def time_has_all_monotonic_neurites(self):
-        nc.has_all_monotonic_neurites(self.neuron, tol=1e-6)
-
     def time_has_all_nonzero_segment_lengths(self):
         nc.has_all_nonzero_segment_lengths(self.neuron, threshold=0.0)
 

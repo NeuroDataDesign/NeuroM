@@ -38,7 +38,7 @@ import numpy as np
 from neurom import NeuriteType
 from neurom._compat import zip
 from neurom.check import CheckResult
-from neurom.check.morphtree import get_flat_neurites, get_nonmonotonic_neurites
+from neurom.check.morphtree import get_flat_neurites
 from neurom.core import Tree, iter_neurites, iter_sections, iter_segments
 from neurom.core.dataformat import COLS
 from neurom.features import neuritefunc as _nf
@@ -111,19 +111,6 @@ def has_no_flat_neurites(neuron, tol=0.1, method='ratio'):
         CheckResult with result
     '''
     return CheckResult(len(get_flat_neurites(neuron, tol, method)) == 0)
-
-
-def has_all_monotonic_neurites(neuron, tol=1e-6):
-    '''Check that a neuron has only neurites that are monotonic
-
-    Arguments:
-        neuron(Neuron): The neuron object to test
-        tol(float): tolerance
-
-    Returns:
-        CheckResult with result
-    '''
-    return CheckResult(len(get_nonmonotonic_neurites(neuron, tol)) == 0)
 
 
 def has_all_nonzero_segment_lengths(neuron, threshold=0.0):
