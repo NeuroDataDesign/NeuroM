@@ -36,7 +36,7 @@ from neurom._compat import filter
 from neurom import morphmath
 from neurom.core.types import NeuriteIter, NeuriteType
 from neurom.core.dataformat import COLS
-from copy import deepcopy
+from copy import deepcopy, copy
 from itertools import chain
 
 import numpy as np
@@ -372,14 +372,6 @@ class Neurite(object):
         '''
         return sum(s.volume for s in self.iter_sections())
 
-    def transform(self, trans):
-        '''Return a copy of this neurite with a 3D transformation applied'''
-        clone = deepcopy(self)
-        for n in clone.iter_sections():
-            n.points[:, COLS.XYZ] = trans(n.points[:, COLS.XYZ])
-
-        return clone
-
     def iter_sections(self, order=Tree.ipreorder, neurite_order=NeuriteIter.FileOrder):
         '''iteration over section nodes
 
@@ -436,6 +428,9 @@ class Neuron(morphio.mut.Morphology):
         else:
             self.neurom_soma = Soma(points=np.empty((0, 4)))
 
+    def __copy__(self):
+        return Neuron(self)
+
     @property
     def soma(self):
         return self.neurom_soma
@@ -466,8 +461,10 @@ class Neuron(morphio.mut.Morphology):
 
     def transform(self, trans):
         '''Return a copy of this neuron with a 3D transformation applied'''
-        return Neuron(self.soma.transform(trans),
-                      [neurite.transform(trans) for neurite in self.neurites],
-                      name=self.name)
+        obj = Neuron(self)
+        obj.soma.points[:, COLS.XYZ] = trans(obj.soma.points[:, COLS.XYZ])
+        for section in obj.sections:
+            section.morphio_section.points = trans(section.morphio_section.points)
+        return obj
 
     __repr__ = __str__
