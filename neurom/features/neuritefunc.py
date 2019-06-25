@@ -305,17 +305,17 @@ def partition_asymmetries(neurites, neurite_type=None):
                              neurite_filter=is_type(neurite_type)))
 
 
-def partition_pairs(neurites, neurite_type=NeuriteType.all):
+def partition_pairs(neurites, neurite_type=None):
     '''Partition pairs at bifurcation points of a collection of neurites.
     Partition pait is defined as the number of bifurcations at the two
     daughters of the bifurcating section'''
-    return map(_bifurcationfunc.partition_pair,
+    return map(bifurcationfunc.partition_pair,
                iter_sections(neurites,
                              iterator_type=Tree.ibifurcation_point,
                              neurite_filter=is_type(neurite_type)))
 
 
-def section_radial_distances(neurites, neurite_type=NeuriteType.all, origin=None,
+def section_radial_distances(neurites, neurite_type=None, origin=None,
                              iterator_type=Tree.ipreorder):
     '''Section radial distances in a collection of neurites.
     The iterator_type can be used to select only terminal sections (ileaf)
@@ -329,19 +329,19 @@ def section_radial_distances(neurites, neurite_type=NeuriteType.all, origin=None
     return dist
 
 
-def section_term_radial_distances(neurites, neurite_type=NeuriteType.all, origin=None):
+def section_term_radial_distances(neurites, neurite_type=None, origin=None):
     '''Get the radial distances of the termination sections for a collection of neurites'''
     return section_radial_distances(neurites, neurite_type=neurite_type, origin=origin,
                                     iterator_type=Tree.ileaf)
 
 
-def section_bif_radial_distances(neurites, neurite_type=NeuriteType.all, origin=None):
+def section_bif_radial_distances(neurites, neurite_type=None, origin=None):
     '''Get the radial distances of the bifurcation sections for a collection of neurites'''
     return section_radial_distances(neurites, neurite_type=neurite_type, origin=origin,
                                     iterator_type=Tree.ibifurcation_point)
 
 
-def number_of_sections_per_neurite(neurites, neurite_type=NeuriteType.all):
+def number_of_sections_per_neurite(neurites, neurite_type=None):
     '''Get the number of sections per neurite in a collection of neurites'''
     return list(sum(1 for _ in n.iter_sections())
                 for n in iter_neurites(neurites, filt=is_type(neurite_type)))
@@ -395,12 +395,12 @@ def section_tortuosity(neurites, neurite_type=None):
     return map_sections(sectionfunc.section_tortuosity, neurites, neurite_type=neurite_type)
 
 
-def section_end_distances(neurites, neurite_type=NeuriteType.all):
+def section_end_distances(neurites, neurite_type=None):
     '''section end to end distances in a collection of neurites'''
     return map_sections(sectionfunc.section_end_distance, neurites, neurite_type=neurite_type)
 
 
-def principal_direction_extents(neurites, neurite_type=NeuriteType.all, direction=0):
+def principal_direction_extents(neurites, neurite_type=None, direction=0):
     '''Principal direction extent of neurites in neurons'''
     def _pde(neurite):
         '''Get the PDE of a single neurite'''
@@ -411,6 +411,6 @@ def principal_direction_extents(neurites, neurite_type=NeuriteType.all, directio
     return [_pde(neurite) for neurite in iter_neurites(neurites, filt=is_type(neurite_type))]
 
 
-def section_strahler_orders(neurites, neurite_type=NeuriteType.all):
+def section_strahler_orders(neurites, neurite_type=None):
     '''Inter-segment opening angles in a section'''
     return map_sections(sectionfunc.strahler_order, neurites, neurite_type)
