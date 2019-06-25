@@ -8,8 +8,8 @@ from neurom import load_neuron, get
 from numpy.testing import assert_allclose
 
 _PWD = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(_PWD, '../../../test_data/h5/v1/Neuron.h5')
-NEURON = load_neuron(DATA_PATH)
+DATA_PATH = os.path.join(_PWD, '../../../test_data')
+NEURON = load_neuron(os.path.join(DATA_PATH, 'h5', 'v1', 'Neuron.h5'))
 NEURITE = NEURON.neurites[0]
 TREE = NEURITE.root_node
 
@@ -100,11 +100,11 @@ class TestDendrogram(object):
     def test_generate_soma(self):
 
         vrec = self.dnrn.soma
-        trec = np.array([[-0.17071068, -0.34142136],
-                         [-0.17071068,  0.        ],
-                         [ 0.17071068,  0.        ],
-                         [ 0.17071068, -0.34142136]])
-        assert_allclose(vrec, trec)
+        trec = np.array([[-0.092495, -0.18499],
+                         [-0.092495,  0.],
+                         [0.092495,  0.],
+                         [0.092495, -0.18499]])
+        assert_allclose(vrec, trec, rtol=1e-5)
 
         vrec = self.dtr.soma
 

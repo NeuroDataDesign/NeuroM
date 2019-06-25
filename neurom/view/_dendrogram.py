@@ -32,6 +32,7 @@ from copy import deepcopy
 import sys
 import numpy as np
 
+import morphio
 from neurom.core import Tree, Neurite
 from neurom.core.dataformat import COLS
 
@@ -132,7 +133,7 @@ class Dendrogram(object):
         self._show_diameters = show_diameters
 
         # input object, tree, or neuron
-        self._obj = deepcopy(Neurite(obj) if isinstance(obj, Tree) else obj)
+        self._obj = Neurite(obj) if isinstance(obj, Tree) else obj
 
         # counter/index for the storage of the rectangles.
         # it is updated recursively
@@ -176,12 +177,18 @@ class Dendrogram(object):
         # TODO: This should be fixed so we don't set sys.setrecursionlimit at all
         sys.setrecursionlimit(max_depth)
 
+        dummy_morph = morphio.mut.Morphology()
+        morphio.set_ignored_warning(morphio.Warning.appending_empty_section, True)
+
         if isinstance(self._obj, Neurite):
 
             max_diameter = _max_diameter(self._obj.root_node)
 
-            dummy_section = Tree()
-            dummy_section.add_child(self._obj.root_node)
+            empty_root = dummy_morph.append_root_section(morphio.PointLevel(),
+                                                         morphio.SectionType.undefined)
+            dummy_section = Tree(empty_root)
+            empty_root.append_section(self._obj.root_node.morphio_section, recursive=True)
+
             self._generate_dendro(dummy_section, (max_diameter, 0.), offsets)
 
             self._groups.append((0, self._n))
@@ -190,13 +197,16 @@ class Dendrogram(object):
 
         else:
 
+
             for neurite in self._obj.neurites:
+                root = neurite.root_node
+                max_diameter = _max_diameter(root)
 
-                neurite = neurite.root_node
-                max_diameter = _max_diameter(neurite)
-                dummy_section = Tree()
+                empty_root = dummy_morph.append_root_section(morphio.PointLevel(),
+                                                             morphio.SectionType.undefined)
+                empty_root.append_section(root.morphio_section, recursive=True)
+                dummy_section = Tree(empty_root)
 
-                dummy_section.add_child(neurite)
                 self._generate_dendro(dummy_section, (max_diameter, 0.), offsets)
 
                 # store in trees the indices for the slice which corresponds
@@ -214,6 +224,9 @@ class Dendrogram(object):
 
         # set it back to its initial value
         sys.setrecursionlimit(old_depth)
+
+        morphio.set_ignored_warning(morphio.Warning.appending_empty_section, False)
+
 
     # pylint: disable=too-many-locals
     def _generate_dendro(self, current_section, spacing, offsets):
