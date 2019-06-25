@@ -625,5 +625,5 @@ class PlotBuilder:
 
 def _plot_neuron(neuron, plane, title, inline, **kwargs):
     ''' Draw a neuron using plotly '''
-    builder = PlotBuilder(neuron, plane, title, inline, **kwargs)
-    return builder.plot()
+    builder = PlotBuilder(neuron, plane, title, inline)
+    return builder.plot(**kwargs)
