@@ -369,16 +369,15 @@ def test_segment_meander_angles_single_section():
 
     feat = 'segment_meander_angles'
 
-    sec = core.Section(np.array([[0, 0, 0],
-                                 [1, 0, 0],
-                                 [1, 1, 0],
-                                 [2, 1, 0],
-                                 [2, 2, 0]]))
+    nrn = nm.load_neuron(("asc", """((Dendrite)
+                                    (0 0 0 2)
+                                    (1 0 0 2)
+                                    (1 1 0 2)
+                                    (2 1 0 2)
+                                    (2 2 0 2)))"""))
 
-    nrt = core.Neurite(sec)
-    nrn = Mock()
-    nrn.neurites = [nrt]
-    nrn.soma = None
+
+    nrt = nrn.neurites[0]
     pop = core.Population([nrn])
 
     ref = [math.pi / 2, math.pi / 2, math.pi / 2]
