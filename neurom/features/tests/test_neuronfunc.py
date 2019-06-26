@@ -76,7 +76,7 @@ def test_trunk_origin_azimuths():
 
 @nt.raises(Exception)
 def test_trunk_elevation_zero_norm_vector_raises():
-    _nf.trunk_origin_elevations(NRN)
+    _nf.trunk_origin_elevations(SIMPLE)
 
 
 def test_sholl_crossings_simple():
