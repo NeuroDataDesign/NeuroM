@@ -31,5 +31,5 @@
 from .types import NeuriteType, NeuriteIter
 from ._soma import Soma, SomaError
 from ._neuron import (Tree, Section, Neurite, Neuron, iter_neurites,
-                      iter_sections, iter_segments) #, graft_neuron)
+                      iter_sections, iter_segments, graft_neuron)
 from .population import Population

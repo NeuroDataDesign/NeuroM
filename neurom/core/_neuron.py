@@ -312,10 +312,12 @@ def iter_segments(obj, neurite_filter=None, neurite_order=NeuriteIter.FileOrder)
                                for sec in sections)
 
 
-# def graft_neuron(root_section):
-#     '''Returns a neuron starting at root_section'''
-#     assert isinstance(root_section, Section)
-#     return Neuron(soma=Soma(root_section.points[:1]), neurites=[Neurite(root_section)])
+def graft_neuron(section):
+    '''Returns a neuron starting at section'''
+    assert isinstance(section, Section)
+    m = morphio.mut.Morphology()
+    m.append_root_section(section.morphio_section)
+    return Neuron(m)
 
 
 class Neurite(object):

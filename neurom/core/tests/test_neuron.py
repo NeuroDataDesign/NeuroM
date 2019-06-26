@@ -34,7 +34,7 @@ from nose import tools as nt
 
 import neurom as nm
 from neurom._compat import zip
-from neurom.core import iter_segments, iter_neurites # graft_neuron
+from neurom.core import iter_segments, iter_neurites, graft_neuron
 
 
 _path = os.path.dirname(os.path.abspath(__file__))
@@ -51,12 +51,12 @@ def test_simple():
 #     check_cloned_neuron(nrn1, nrn2)
 
 
-# def test_graft_neuron():
-#     nrn1 = nm.load_neuron(os.path.join(SWC_PATH, 'simple.swc'))
-#     basal_dendrite = nrn1.neurites[0]
-#     nrn2 = graft_neuron(basal_dendrite.root_node)
-#     nt.assert_equal(len(nrn2.neurites), 1)
-#     nt.assert_equal(basal_dendrite, nrn2.neurites[0])
+def test_graft_neuron():
+    nrn1 = nm.load_neuron(os.path.join(SWC_PATH, 'simple.swc'))
+    basal_dendrite = nrn1.neurites[0]
+    nrn2 = graft_neuron(basal_dendrite.root_node)
+    nt.assert_equal(len(nrn2.neurites), 1)
+    nt.assert_equal(basal_dendrite, nrn2.neurites[0])
 
 
 def check_cloned_neuron(nrn1, nrn2):
