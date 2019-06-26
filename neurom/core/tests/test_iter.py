@@ -76,10 +76,9 @@ def test_iter_neurites_filter():
 
 
 def test_iter_neurites_mapping():
-    SIMPLE.neurites[0].points
-    # assert_sequence_equal(list(core.iter_neurites(POP,
-    #                                               mapfun=lambda neurite: len(neurite.points))),
-    #                       [211, 211, 211, 211, 211, 211, 211, 211, 211, 500, 500, 500])
+    assert_sequence_equal(list(core.iter_neurites(POP,
+                                                  mapfun=lambda neurite: len(neurite.points))),
+                          [211, 211, 211, 211, 211, 211, 211, 211, 211, 500, 500, 500])
 
 def test_iter_neurites_filter_mapping():
     n = [n for n in core.iter_neurites(POP,
@@ -91,9 +90,9 @@ def test_iter_neurites_filter_mapping():
 
 
 def test_iter_sections_default():
-    ref = [s.id for n in SIMPLE.neurites for s in n.iter_sections()]
-    assert_sequence_equal(ref, [n.id for n in core.iter_sections(SIMPLE)])
-
+    ref = [s for n in POP.neurites for s in n.iter_sections()]
+    assert_sequence_equal(ref,
+                          [n for n in core.iter_sections(POP)])
 
 def test_iter_sections_default_pop():
     ref = [s.id for n in POP.neurites for s in n.iter_sections()]
@@ -130,18 +129,18 @@ def test_iter_sections_ipostorder():
                           [n.id for n in core.iter_sections(POP, iterator_type=Tree.ibifurcation_point)])
 
 
-# def test_iter_sections_iforking():
+def test_iter_sections_iforking():
 
-#     ref = [s for n in POP.neurites for s in n.iter_sections(Tree.iforking_point)]
-#     assert_sequence_equal(ref,
-#                           [n for n in core.iter_sections(POP, iterator_type=Tree.iforking_point)])
+    ref = [s for n in POP.neurites for s in n.iter_sections(Tree.iforking_point)]
+    assert_sequence_equal(ref,
+                          [n for n in core.iter_sections(POP, iterator_type=Tree.iforking_point)])
 
 
-# def test_iter_sections_ileaf():
+def test_iter_sections_ileaf():
 
-#     ref = [s for n in POP.neurites for s in n.iter_sections(Tree.ileaf)]
-#     assert_sequence_equal(ref,
-#                           [n for n in core.iter_sections(POP, iterator_type=Tree.ileaf)])
+    ref = [s for n in POP.neurites for s in n.iter_sections(Tree.ileaf)]
+    assert_sequence_equal(ref,
+                          [n for n in core.iter_sections(POP, iterator_type=Tree.ileaf)])
 
 
 def test_iter_section_nrn():
@@ -199,13 +198,16 @@ def test_iter_segments_pop():
     nt.eq_(len(ref), 919)
 
 
-# def test_iter_segments_section():
-#     sec = core.Section([[1, 2, 3, 4],
-#                         [5, 6, 7, 8],
-#                         [8, 7, 6, 5],
-#                         [4, 3, 2, 1],
-#                         ])
-#     ref = list(core.iter_segments(sec))
-#     nt.eq_(ref, [([1, 2, 3, 4], [5, 6, 7, 8]),
-#                  ([5, 6, 7, 8], [8, 7, 6, 5]),
-#                  ([8, 7, 6, 5], [4, 3, 2, 1])])
+def test_iter_segments_section():
+    sec = load_neuron(('asc',
+                       '''(Dendrite)
+                          (1 2 3 8)
+                          (5 6 7 16)
+                          (8 7 6 10)
+                          (4 3 2 2))
+                       ''')).sections[0]
+    ref = [[p1.tolist(), p2.tolist()] for p1, p2 in core.iter_segments(sec)]
+
+    nt.eq_(ref, [[[1, 2, 3, 4], [5, 6, 7, 8]],
+                 [[5, 6, 7, 8], [8, 7, 6, 5]],
+                 [[8, 7, 6, 5], [4, 3, 2, 1]]])

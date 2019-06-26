@@ -125,7 +125,7 @@ def test_eval_stats_applies_numpy_function():
 def test_extract_stats_single_neuron():
     nrn = nm.load_neuron(os.path.join(DATA_PATH, 'Neuron.swc'))
     res = ms.extract_stats(nrn, REF_CONFIG)
-    nt.eq_(res.keys(), REF_OUT.keys())
+    nt.eq_(set(res.keys()), set(REF_OUT.keys()))
     #Note: soma radius is calculated from the sphere that gives the area
     # of the cylinders described in Neuron.swc
     nt.assert_almost_equal(res['mean_soma_radius'], REF_OUT['mean_soma_radius'])

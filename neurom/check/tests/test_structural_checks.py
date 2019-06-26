@@ -40,10 +40,10 @@ SWC_PATH = os.path.join(DATA_PATH, 'swc')
 H5V1_PATH = os.path.join(DATA_PATH, 'h5/v1')
 
 # TODO:
-# The origin NeuronM neuron loader was more flexible than the one in Brion
+# The origin NeuronM neuron loader was more flexible than the one in MorphIO
 # As a result it was possible to load broken morphologies and call check function on them
 # to see if they are broken or nothing
-# The current implementation of Brion does not support this but it would be a good nice-to-have
+# The current implementation of MorphIO does not support this but it would be a good nice-to-have
 # in the future
 
 class TestIOCheckFST(object):

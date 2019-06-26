@@ -57,6 +57,7 @@ Examples:
     >>> n_points = [n for n in nm.iter_neurites(nrns, mapping, filter)]
 
 '''
+import logging as _logging
 
 # All MorphIO is imported here so other NeuroM module can refer
 # to the neurom._core._morphio objects and won't need the following pragma:
@@ -75,3 +76,7 @@ APICAL_DENDRITE = NeuriteType.apical_dendrite
 BASAL_DENDRITE = NeuriteType.basal_dendrite
 AXON = NeuriteType.axon
 SOMA = NeuriteType.soma
+
+# prevent 'No handlers could be found for logger ...' errors
+# https://pythonhosted.org/logutils/libraries.html
+_logging.getLogger(__name__).addHandler(_logging.NullHandler())

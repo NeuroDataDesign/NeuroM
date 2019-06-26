@@ -147,10 +147,10 @@ def test_has_no_flat_neurites():
     nt.assert_true(nrn_chk.has_no_flat_neurites(n, 1e-6, method='tolerance'))
     nt.assert_true(nrn_chk.has_no_flat_neurites(n, 0.1, method='ratio'))
 
-    # n = _make_flat(n)
+    n = _make_flat(n)
 
-    # nt.assert_false(nrn_chk.has_no_flat_neurites(n, 1e-6, method='tolerance'))
-    # nt.assert_false(nrn_chk.has_no_flat_neurites(n, 0.1, method='ratio'))
+    nt.assert_false(nrn_chk.has_no_flat_neurites(n, 1e-6, method='tolerance'))
+    nt.assert_false(nrn_chk.has_no_flat_neurites(n, 0.1, method='ratio'))
 
 
 def test_nonzero_neurite_radii_good_data():
@@ -176,8 +176,6 @@ def test_has_all_nonzero_neurite_radii_threshold():
     nt.assert_equal(len(ids.info), 122)
 
 
-# TODO: decide whether or not 1st neurite point should be soma point
-# if not, then (1, 0) should not be part of the result
 def test_nonzero_neurite_radii_bad_data():
     nrn = NEURONS['Neuron_zero_radius.swc']
     ids = nrn_chk.has_all_nonzero_neurite_radii(nrn, threshold=0.7)
@@ -397,17 +395,17 @@ def test__bool__():
 
 def test_has_single_children():
     nrn = load_neuron(('asc', """
-( (Color Blue)
-  (Axon)
-  (0 5 0 2)
-  (2 9 0 2)
-  (0 13 0 2)
-  (
-    (2 13 0 2)
-    (4 13 0 2)
-    (6 13 0 2)
-  )
-)
-"""))
+                      ( (Color Blue)
+                        (Axon)
+                        (0 5 0 2)
+                        (2 9 0 2)
+                        (0 13 0 2)
+                        (
+                          (2 13 0 2)
+                          (4 13 0 2)
+                          (6 13 0 2)
+                        )
+                      )
+                      """))
 
     nt.ok_(not nrn_chk.has_no_single_children(nrn).status)
