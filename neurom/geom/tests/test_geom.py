@@ -88,4 +88,4 @@ def test_convex_hull_volume():
     # This leverages scipy ConvexHull and we don't want
     # to re-test scipy, so simply regression test the volume
     hull = geom.convex_hull(NRN)
-    nt.assert_almost_equal(hull.volume, 208641.65, places=2)
+    nt.assert_almost_equal(hull.volume, 208639.7805986741, places=2)
