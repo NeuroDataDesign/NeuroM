@@ -47,7 +47,7 @@ REQS = ['click>=7.0',
         'scipy>=1.2.0',
         'tqdm>=4.8.4',
         'future>=0.16.0',
-        'morphio>=2.1.0',
+        'morphio>=2.1.3',
         ]
 
 # Hack to avoid installation of modules with C extensions
