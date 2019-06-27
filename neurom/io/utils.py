@@ -34,6 +34,7 @@ import os
 import shutil
 import tempfile
 import uuid
+import sys
 from io import StringIO, open
 
 from neurom._compat import StringType, filter
@@ -197,6 +198,8 @@ def _get_file(handle):
 
     extension, stream = handle
     if isinstance(stream, StringType):
+        if sys.version_info[0] == 2:
+            stream = unicode(stream)
         stream = StringIO(stream)
     fd, temp_file = tempfile.mkstemp(str(uuid.uuid4()) + '.' + extension,
                                      prefix='neurom-')
