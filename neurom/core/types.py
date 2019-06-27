@@ -35,6 +35,7 @@ from neurom.utils import OrderedEnum
 
 NeuriteType.name = property(lambda self: str(self).split('.')[-1])
 
+
 @unique
 class NeuriteIter(OrderedEnum):
     '''Neurite iteration orders'''

@@ -199,7 +199,7 @@ def _get_file(handle):
     extension, stream = handle
     if isinstance(stream, StringType):
         if sys.version_info[0] == 2:
-            stream = unicode(stream)
+            stream = unicode(stream)  # pylint: disable=undefined-variable
         stream = StringIO(stream)
     fd, temp_file = tempfile.mkstemp(str(uuid.uuid4()) + '.' + extension,
                                      prefix='neurom-')

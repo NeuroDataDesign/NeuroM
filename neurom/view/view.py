@@ -30,9 +30,6 @@
 import numpy as np
 from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Circle
-from mpl_toolkits.mplot3d.art3d import \
-    Line3DCollection  # pylint: disable=relative-import
-
 from mpl_toolkits.mplot3d.art3d import Line3DCollection  # pylint: disable=relative-import
 
 from neurom import NeuriteType, geom

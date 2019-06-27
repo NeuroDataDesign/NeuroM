@@ -28,7 +28,6 @@
 
 '''Dendrogram helper functions and class'''
 
-from copy import deepcopy
 import sys
 import numpy as np
 
@@ -197,7 +196,6 @@ class Dendrogram(object):
 
         else:
 
-
             for neurite in self._obj.neurites:
                 root = neurite.root_node
                 max_diameter = _max_diameter(root)
@@ -227,8 +225,8 @@ class Dendrogram(object):
 
         morphio.set_ignored_warning(morphio.Warning.appending_empty_section, False)
 
-
     # pylint: disable=too-many-locals
+
     def _generate_dendro(self, current_section, spacing, offsets):
         '''Recursive function for dendrogram line computations
         '''

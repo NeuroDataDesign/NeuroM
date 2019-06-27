@@ -134,8 +134,7 @@ def trunk_origin_elevations(nrns, neurite_type=None):
 
         if norm_vector >= np.finfo(type(norm_vector)).eps:
             return np.arcsin(vector[COLS.Y] / norm_vector)
-        else:
-            raise ValueError("Norm of vector between soma center and section is almost zero.")
+        raise ValueError("Norm of vector between soma center and section is almost zero.")
 
     return [_elevation(s.root_node.points, n.soma)
             for n in nrns

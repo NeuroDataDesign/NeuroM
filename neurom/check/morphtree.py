@@ -34,7 +34,7 @@ import numpy as np
 from neurom.core.dataformat import COLS
 from neurom import morphmath as mm
 from neurom.morphmath import principal_direction_extent
-from neurom._compat import range, filter
+from neurom._compat import filter
 
 
 def is_flat(neurite, tol, method='tolerance'):

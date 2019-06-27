@@ -36,9 +36,7 @@ from morphio import (MorphioError, RawDataError, SomaError, IDSequenceError,
 
 class NeuroMError(Exception):
     '''Base class for NeuroM errors'''
-    pass
 
 
 class ConfigError(NeuroMError):
     '''Exception class for configuration data in apps errors'''
-    pass

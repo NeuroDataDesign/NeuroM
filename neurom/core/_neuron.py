@@ -28,47 +28,46 @@
 
 '''Neuron classes and functions'''
 
-import numpy as np
 from collections import deque
-
-from neurom._compat import filter
-
-from neurom import morphmath
-from neurom.core.types import NeuriteIter, NeuriteType
-from neurom.core.dataformat import COLS
-from copy import deepcopy, copy
 from itertools import chain
 
+import morphio
 import numpy as np
 
+from neurom import morphmath
 from neurom._compat import filter, map, zip
 from neurom.core._soma import Soma, make_soma
 from neurom.core.dataformat import COLS
+from neurom.core.types import NeuriteIter, NeuriteType
 from neurom.utils import memoize
-
-import morphio
 
 
 class Section(object):
     '''Simple recursive tree class'''
 
     def __init__(self, morphio_section):
+        '''The section ctor'''
         self.morphio_section = morphio_section
 
     @property
     def id(self):
+        '''Returns the section ID'''
         return self.morphio_section.id
 
     @property
     def parent(self):
+        '''Returns the parent section if non root section else None'''
         return None if self.morphio_section.is_root else Section(self.morphio_section.parent)
 
     @property
     def children(self):
+        '''Returns a list of child section'''
         return [Section(child) for child in self.morphio_section.children]
 
     def append_section(self, properties):
         '''
+        Appends a section
+
         points = [[0, 0, 0], [1, 1, 1], [2, 2, 2]]
         diameters = [10, 10, 10]
 
@@ -155,29 +154,30 @@ class Section(object):
 
     @property
     def points(self):
+        '''Returns the section list of points the NeuroM way (points + radius)'''
         return np.concatenate((self.morphio_section.points,
                                self.morphio_section.diameters[:, np.newaxis] / 2.),
                               axis=1)
 
     @points.setter
     def points(self, value):
+        '''Set the points'''
         self.morphio_section.points = np.copy(value[:, COLS.XYZ])
         self.morphio_section.diameters = np.copy(value[:, COLS.R]) * 2
 
     @property
     def type(self):
+        '''Returns the section type'''
         return self.morphio_section.type
 
     # TODO: Should we have a @type.setter ?
 
     @property
-    #@memoize
     def length(self):
         '''Return the path length of this section.'''
         return morphmath.section_length(self.points)
 
     @property
-    #@memoize
     def area(self):
         '''Return the surface area of this section.
 
@@ -187,7 +187,6 @@ class Section(object):
         return sum(morphmath.segment_area(s) for s in iter_segments(self))
 
     @property
-    #@memoize
     def volume(self):
         '''Return the volume of this section.
 
@@ -202,6 +201,7 @@ class Section(object):
 
     __repr__ = __str__
 
+
 Tree = Section
 
 # NRN simulator iteration order
@@ -212,6 +212,7 @@ NRN_ORDER = {NeuriteType.soma: 0,
              NeuriteType.basal_dendrite: 2,
              NeuriteType.apical_dendrite: 3,
              NeuriteType.undefined: 4}
+
 
 def iter_neurites(obj, mapfun=None, filt=None, neurite_order=NeuriteIter.FileOrder):
     '''Iterator to a neurite, neuron or neuron population
@@ -328,16 +329,18 @@ class Neurite(object):
 
     @property
     def root_node(self):
+        '''Returns the first section of the neurite'''
         return Section(self.morphio_root_node)
 
     @property
     def type(self):
+        '''Returns the type of the root node'''
         return self.root_node.type
 
     @property
     # @memoize
     def points(self):
-        '''Return unordered array with all the points in this neurite
+        '''Returns unordered array with all the points in this neurite
 
         Note: Duplicate points at section bifurcations are removed'''
 
@@ -350,7 +353,7 @@ class Neurite(object):
     @property
     @memoize
     def length(self):
-        '''Return the total length of this neurite.
+        '''Returns the total length of this neurite.
 
         The length is defined as the sum of lengths of the sections.
         '''
@@ -359,7 +362,7 @@ class Neurite(object):
     @property
     @memoize
     def area(self):
-        '''Return the surface area of this neurite.
+        '''Returns the surface area of this neurite.
 
         The area is defined as the sum of area of the sections.
         '''
@@ -368,7 +371,7 @@ class Neurite(object):
     @property
     @memoize
     def volume(self):
-        '''Return the volume of this neurite.
+        '''Returns the volume of this neurite.
 
         The volume is defined as the sum of volumes of the sections.
         '''
@@ -412,8 +415,6 @@ class Neurite(object):
     __repr__ = __str__
 
 
-
-
 class Neuron(morphio.mut.Morphology):
     '''Class representing a simple neuron'''
 
@@ -435,10 +436,12 @@ class Neuron(morphio.mut.Morphology):
 
     @property
     def soma(self):
+        '''Return the soma'''
         return self.neurom_soma
 
     @soma.setter
     def soma(self, value):
+        '''Set the soma'''
         self.neurom_soma = value
 
     def __str__(self):
@@ -447,6 +450,7 @@ class Neuron(morphio.mut.Morphology):
 
     @property
     def neurites(self):
+        '''Returns the list of neurites'''
         return [Neurite(root_section) for root_section in self.root_sections]
 
     @property
@@ -456,10 +460,9 @@ class Neuron(morphio.mut.Morphology):
 
     @property
     def points(self):
+        '''Returns the list of points'''
         return np.concatenate(
             [section.points for section in iter_sections(self)])
-
-
 
     def transform(self, trans):
         '''Return a copy of this neuron with a 3D transformation applied'''
