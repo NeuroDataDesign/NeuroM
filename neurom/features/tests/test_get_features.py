@@ -788,23 +788,6 @@ def test_partition_asymmetry():
 class MockNeuron:
    pass
 
-
-def test_trunk_origin_elevations():
-   n0 = load_neuron(('swc',"""
-   1 1 0 0 0 4 -1
-   2 3 1 0 0 2 1
-   3 3 0 1 0 2 1
-   """))
-
-   n1 = load_neuron(('swc',"""
-   1 1 0 0 0 4 -1
-   2 3 0 -1 0 2 1
-   """))
-
-   pop = [n0, n1]
-   assert_array_equal(features_get('trunk_origin_elevations', pop),
-                      np.array([0.0, np.pi/2., -np.pi/2.], dtype=np.float32))
-   nt.eq_(len(features_get('trunk_origin_elevations', pop, neurite_type=NeuriteType.axon)), 0)
 #
 #def test_trunk_origin_azimuths():
 #    n0 = MockNeuron()

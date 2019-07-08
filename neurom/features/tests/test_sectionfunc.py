@@ -42,6 +42,7 @@ from utils import _close, _equal
 
 _PWD = os.path.dirname(os.path.abspath(__file__))
 H5_PATH = os.path.join(_PWD, '../../../test_data/h5/v1/')
+SWC_PATH = os.path.join(_PWD, '../../../test_data/swc')
 DATA_PATH = os.path.join(H5_PATH, 'Neuron.h5')
 
 NRN = load_neuron(DATA_PATH)
@@ -153,3 +154,42 @@ def test_section_meander_angles_single_segment():
     (0 0 0 2)
     (1 1 1 2))""")).sections[0]
     nt.assert_equal(len(_sf.section_meander_angles(s)), 0)
+
+
+def test_strahler_order():
+    path = os.path.join(SWC_PATH, 'strahler.swc')
+    n = load_neuron(path)
+    strahler_order = _sf.strahler_order(n.neurites[0].root_node)
+    nt.eq_(strahler_order, 4)
+
+
+def test_locate_segment_position():
+    s = load_neuron(("asc", """((Dendrite)
+    (0 0 0 0)
+    (3 0 4 200)
+    (6 4 4 400))""")).sections[0]
+
+    nt.assert_equal(
+        _sf.locate_segment_position(s, 0.0),
+        (0, 0.0)
+    )
+    nt.assert_equal(
+        _sf.locate_segment_position(s, 0.25),
+        (0, 2.5)
+    )
+    nt.assert_equal(
+        _sf.locate_segment_position(s, 0.75),
+        (1, 2.5)
+    )
+    nt.assert_equal(
+        _sf.locate_segment_position(s, 1.0),
+        (1, 5.0)
+    )
+    nt.assert_raises(
+        ValueError,
+        _sf.locate_segment_position, s, 1.1
+    )
+    nt.assert_raises(
+        ValueError,
+        _sf.locate_segment_position, s, -0.1
+    )
