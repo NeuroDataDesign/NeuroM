@@ -283,7 +283,7 @@ def test_has_no_root_node_jumps():
     check = nrn_chk.has_no_root_node_jumps(nrn)
     nt.ok_(not check.status)
     assert_equal(len(check.info), 1)
-    assert_equal(check.info[0][0], 1)
+    assert_equal(check.info[0][0], 0)
     assert_array_equal(check.info[0][1], [[0, 3, 0]])
 
     nt.ok_(nrn_chk.has_no_root_node_jumps(nrn, radius_multiplier=4).status)
