@@ -64,16 +64,15 @@ class Section(object):
         '''Returns a list of child section'''
         return [Section(child) for child in self.morphio_section.children]
 
-    def append_section(self, properties):
+    def append_section(self, section):
         '''
-        Appends a section
-
-        points = [[0, 0, 0], [1, 1, 1], [2, 2, 2]]
-        diameters = [10, 10, 10]
-
-        new_section = section.append_section(morphio.PointLevel(points, diameters))
+        Args:
+            section (morphio.Section|morphio.mut.Section|Section|morphio.PointLevel): a section
         '''
-        return self.morphio_section.append_section(properties)
+
+        if isinstance(section, Section):
+            return self.morphio_section.append_section(section.morphio_section)
+        return self.morphio_section.append_section(section)
 
     def is_forking_point(self):
         '''Is tree a forking point?'''
