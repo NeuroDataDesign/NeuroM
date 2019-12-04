@@ -51,7 +51,6 @@ def read(filename, data_wrapper=DataWrapper):
         data = np.reshape(data, (1, -1))
     data = data[:, [X, Y, Z, R, TYPE, ID, P]]
     structures = data[:,4]
-
     
     # Loading in custom data which does not follow the NeuroMorph convention
     # Points not in 1-4 format will be loaded as undefined and cause tuple index errors
