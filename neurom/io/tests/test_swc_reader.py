@@ -95,14 +95,14 @@ def test_simple_reversed():
     nt.eq_(len(rdw.sections), 7)
     
 def test_custom_type():
-    rdw = swc.read(os.path.join(SWC_PATH, 'Custom_type.swc'))
+    rdw = swc.read(os.path.join(SWC_PATH, 'custom_type.swc'))
     nt.eq_(rdw.fmt, 'SWC')
     nt.eq_(len(rdw.data_block), 24)
     nt.eq_(np.shape(rdw.data_block), (24, 7))
     nt.ok_(rdw.data_block[:,4].any() <= 4 and rdw.data_block[:,4].any() >= 0)
     
 def test_no_soma():
-    rdw = swc.read(os.path.join(SWC_PATH, 'test_neuron_no_soma.swc'))
+    rdw = swc.read(os.path.join(SWC_PATH, 'Single_apical_no_soma.swc'))
     nt.eq_(rdw.fmt, 'SWC')
     nt.eq_(len(rdw.data_block), 603)
     nt.eq_(np.shape(rdw.data_block), (603, 7))
