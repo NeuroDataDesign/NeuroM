@@ -97,13 +97,14 @@ def test_simple_reversed():
 def test_custom_type():
     rdw = swc.read(os.path.join(SWC_PATH, 'custom_type.swc'))
     nt.eq_(rdw.fmt, 'SWC')
-    nt.eq_(len(rdw.data_block), 24)
-    nt.eq_(np.shape(rdw.data_block), (24, 7))
+    nt.eq_(len(rdw.data_block), 549)
+    nt.eq_(np.shape(rdw.data_block), (549, 7))
     nt.ok_(rdw.data_block[:,4].any() <= 4 and rdw.data_block[:,4].any() >= 0)
     
 def test_no_soma():
-    rdw = swc.read(os.path.join(SWC_PATH, 'Single_apical_no_soma.swc'))
+    rdw = swc.read(os.path.join(SWC_PATH, 'Single_apical_no_soma.swc'), has_soma = False)
     nt.eq_(rdw.fmt, 'SWC')
-    nt.eq_(len(rdw.data_block), 603)
-    nt.eq_(np.shape(rdw.data_block), (603, 7))
+    nt.eq_(len(rdw.data_block), 211)
+    nt.eq_(np.shape(rdw.data_block), (211, 7))
+    nt.assert_not_equal(rdw.data_block[0][4], 0)
         
