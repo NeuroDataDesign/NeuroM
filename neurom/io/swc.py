@@ -44,23 +44,23 @@ from .datawrapper import DataWrapper
 ID, TYPE, X, Y, Z, R, P = range(7)
 
 
-def read(filename, data_wrapper=DataWrapper):
+def read(filename, data_wrapper=DataWrapper, has_soma = True):
     '''Read an SWC file and return a tuple of data, format.'''
+    '''If a soma point is intended to be there, but is not, create one'''
+    
     data = np.loadtxt(filename)
     if len(np.shape(data)) == 1:
         data = np.reshape(data, (1, -1))
     data = data[:, [X, Y, Z, R, TYPE, ID, P]]
     structures = data[:,4]
     
-    # Loading in custom data which does not follow the NeuroMorph convention
-    # Points not in 1-4 format will be loaded as undefined and cause tuple index errors
-    if structures.all() not in range(1,5):
+    if structures.all() in range(1,5):
         custom_type = True
         print("SWC in custom format, reading > 4 as undefined")
         structures[structures > 4.0] = 0
 
-    # Choose a soma point if one is not found
-    if (1 not in structures):
+    
+    if (1 not in structures and has_soma):
         print("No soma found, setting soma at first row")
         structures[0] = 1
 
