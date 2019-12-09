@@ -180,16 +180,19 @@ def _get_file(handle):
     return temp_file
 
 
-def load_data(handle, reader=None):
+def load_data(handle, reader=None, has_soma = True):
     '''Unpack data into a raw data wrapper'''
     if not reader:
         reader = os.path.splitext(handle)[1][1:].lower()
 
     if reader not in _READERS:
         raise NeuroMError('Do not have a loader for "%s" extension' % reader)
-
+    
     filename = _get_file(handle)
     try:
+        if (reader == 'swc' and "no_soma" in handle):
+            return _READERS[reader](filename, has_soma = False)
+        
         return _READERS[reader](filename)
     except Exception as e:
         L.exception('Error reading file %s, using "%s" loader', filename, reader)
