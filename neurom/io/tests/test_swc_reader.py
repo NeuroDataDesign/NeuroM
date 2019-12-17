@@ -97,8 +97,8 @@ def test_simple_reversed():
 def test_custom_type():
     rdw = swc.read(os.path.join(SWC_PATH, 'custom_type.swc'))
     nt.eq_(rdw.fmt, 'SWC')
-    nt.eq_(len(rdw.data_block), 200)
-    nt.eq_(np.shape(rdw.data_block), (200, 7))
+    nt.eq_(len(rdw.data_block), 53)
+    nt.eq_(np.shape(rdw.data_block), (53, 7))
     nt.ok_(rdw.data_block[:,4].any() <= 4 and rdw.data_block[:,4].any() >= 0)
     
 def test_no_soma():
