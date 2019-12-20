@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''Utility functions and for loading neurons'''
+"""Utility functions and for loading neurons"""
 
 import glob
 import logging
@@ -49,9 +49,10 @@ L = logging.getLogger(__name__)
 
 def _is_morphology_file(filepath):
     """ Check if `filepath` is a file with one of morphology file extensions. """
-    return (
-        os.path.isfile(filepath) and
-        os.path.splitext(filepath)[1].lower() in ('.swc', '.h5', '.asc')
+    return os.path.isfile(filepath) and os.path.splitext(filepath)[1].lower() in (
+        ".swc",
+        ".h5",
+        ".asc",
     )
 
 
@@ -70,6 +71,7 @@ class NeuronLoader(object):
         self.file_ext = file_ext
         if cache_size is not None:
             from pylru import FunctionCacheManager
+
             self.get = FunctionCacheManager(self.get, size=cache_size)
 
     def _filepath(self, name):
@@ -90,30 +92,30 @@ class NeuronLoader(object):
 
 
 def get_morph_files(directory):
-    '''Get a list of all morphology files in a directory
+    """Get a list of all morphology files in a directory
 
     Returns:
         list with all files with extensions '.swc' , 'h5' or '.asc' (case insensitive)
-    '''
+    """
     lsdir = (os.path.join(directory, m) for m in os.listdir(directory))
     return list(filter(_is_morphology_file, lsdir))
 
 
 def get_files_by_path(path):
-    '''Get a file or set of files from a file path
+    """Get a file or set of files from a file path
 
     Return list of files with path
-    '''
+    """
     if os.path.isfile(path):
         return [path]
     if os.path.isdir(path):
         return get_morph_files(path)
 
-    raise IOError('Invalid data path %s' % path)
+    raise IOError("Invalid data path %s" % path)
 
 
 def load_neuron(handle, reader=None):
-    '''Build section trees from an h5 or swc file'''
+    """Build section trees from an h5 or swc file"""
     rdw = load_data(handle, reader)
     if isinstance(handle, StringType):
         name = os.path.splitext(os.path.basename(handle))[0]
@@ -122,12 +124,14 @@ def load_neuron(handle, reader=None):
     return FstNeuron(rdw, name)
 
 
-def load_neurons(neurons,
-                 neuron_loader=load_neuron,
-                 name=None,
-                 population_class=Population,
-                 ignored_exceptions=()):
-    '''Create a population object from all morphologies in a directory\
+def load_neurons(
+    neurons,
+    neuron_loader=load_neuron,
+    name=None,
+    population_class=Population,
+    ignored_exceptions=(),
+):
+    """Create a population object from all morphologies in a directory\
         of from morphologies in a list of file names
 
     Parameters:
@@ -141,10 +145,10 @@ def load_neurons(neurons,
     Returns:
         neuron population object
 
-    '''
+    """
     if isinstance(neurons, (list, tuple)):
         files = neurons
-        name = name if name is not None else 'Population'
+        name = name if name is not None else "Population"
     elif isinstance(neurons, StringType):
         files = get_files_by_path(neurons)
         name = name if name is not None else os.path.basename(neurons)
@@ -156,8 +160,7 @@ def load_neurons(neurons,
             pop.append(neuron_loader(f))
         except NeuroMError as e:
             if isinstance(e, ignored_exceptions):
-                L.info('Ignoring exception "%s" for file %s',
-                       e, os.path.basename(f))
+                L.info('Ignoring exception "%s" for file %s', e, os.path.basename(f))
                 continue
             raise
 
@@ -165,23 +168,23 @@ def load_neurons(neurons,
 
 
 def _get_file(handle):
-    '''Returns the filename of the file to read
+    """Returns the filename of the file to read
 
     If handle is a stream, a temp file is written on disk first
-    and its filename is returned'''
+    and its filename is returned"""
     if not isinstance(handle, IOBase):
         return handle
 
-    fd, temp_file = tempfile.mkstemp(str(uuid.uuid4()), prefix='neurom-')
+    fd, temp_file = tempfile.mkstemp(str(uuid.uuid4()), prefix="neurom-")
     os.close(fd)
-    with open(temp_file, 'w') as fd:
+    with open(temp_file, "w") as fd:
         handle.seek(0)
         shutil.copyfileobj(handle, fd)
     return temp_file
 
 
-def load_data(handle, reader=None):
-    '''Unpack data into a raw data wrapper'''
+def load_data(handle, reader=None, has_soma=True):
+    """Unpack data into a raw data wrapper"""
     if not reader:
         reader = os.path.splitext(handle)[1][1:].lower()
 
@@ -190,24 +193,24 @@ def load_data(handle, reader=None):
 
     filename = _get_file(handle)
     try:
+        if reader == "swc" and "no_soma" in handle:
+            return _READERS[reader](filename, has_soma=False)
+
         return _READERS[reader](filename)
     except Exception as e:
         L.exception('Error reading file %s, using "%s" loader', filename, reader)
-        raise RawDataError('Error reading file %s:\n%s' % (filename, str(e)))
+        raise RawDataError("Error reading file %s:\n%s" % (filename, str(e)))
 
 
 def _load_h5(filename):
-    '''Delay loading of h5py until it is needed'''
+    """Delay loading of h5py until it is needed"""
     from neurom.io import hdf5
-    return hdf5.read(filename,
-                     remove_duplicates=False,
-                     data_wrapper=DataWrapper)
+
+    return hdf5.read(filename, remove_duplicates=False, data_wrapper=DataWrapper)
 
 
 _READERS = {
-    'swc': partial(swc.read,
-                   data_wrapper=DataWrapper),
-    'h5': _load_h5,
-    'asc': partial(neurolucida.read,
-                   data_wrapper=DataWrapper)
+    "swc": partial(swc.read, data_wrapper=DataWrapper),
+    "h5": _load_h5,
+    "asc": partial(neurolucida.read, data_wrapper=DataWrapper),
 }
