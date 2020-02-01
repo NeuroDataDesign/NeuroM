@@ -186,7 +186,7 @@ def _get_file(handle):
 def load_data(handle, reader=None, has_soma=True):
     """Unpack data into a raw data wrapper"""
     if not reader:
-        reader = os.path.splitext(handle)[1][1:].lower()
+        reader = os.path.splitext(str(handle))[1][1:].lower()
 
     if reader not in _READERS:
         raise NeuroMError('Do not have a loader for "%s" extension' % reader)

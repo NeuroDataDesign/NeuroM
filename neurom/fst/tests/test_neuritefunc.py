@@ -28,16 +28,17 @@
 
 '''Test neurom._neuritefunc functionality'''
 
-from math import sqrt, pi
-from nose import tools as nt
 import os
+from math import pi, sqrt
+
 import numpy as np
+from nose import tools as nt
 from numpy.testing import assert_allclose
+
 import neurom as nm
-from neurom.geom import convex_hull
 from neurom.fst import _neuritefunc as _nf
 from neurom.fst.sectionfunc import section_volume
-
+from neurom.geom import convex_hull
 from utils import _close
 
 _PWD = os.path.dirname(os.path.abspath(__file__))
@@ -279,6 +280,16 @@ def test_segment_lengths():
                     (5.0, 5.0, 6.0,   # type 3, basal dendrite
                      4.0, 6.0, 5.0))  # type 2, axon
 
+def test_segment_areas():
+    result = _nf.segment_areas(SIMPLE)
+    assert_allclose(result,
+                    [31.415927,
+                     16.019042,
+                     19.109562,
+                     25.132741,
+                     19.109562,
+                     16.019042])
+
 def test_segment_volumes():
     expected = [
         15.70796327,
@@ -305,5 +316,9 @@ def test_segment_radial_distances():
     '''midpoints on segments'''
     radial_distances = _nf.segment_radial_distances(SIMPLE)
     assert_allclose(radial_distances,
-                    (2.5, sqrt(2.5**2 + 5**2), sqrt(3**2 + 5**2),
-                     2.0, 5.0, sqrt(2.5**2 + 4**2)))
+                    [2.5, sqrt(2.5**2 + 5**2), sqrt(3**2 + 5**2), 2.0, 5.0, sqrt(2.5**2 + 4**2)])
+
+
+def test_segment_path_lengths():
+    pathlengths = _nf.segment_path_lengths(SIMPLE)
+    assert_allclose(pathlengths, [5., 10., 11., 4., 10., 9.])
