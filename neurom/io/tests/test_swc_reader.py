@@ -32,7 +32,6 @@ import numpy as np
 
 from neurom.core.dataformat import COLS
 from neurom.io import swc
-from neurom.exceptions import NeuroMError, SomaError
 
 from nose import tools as nt
 
@@ -49,8 +48,7 @@ def test_read_swc_basic_with_offset_0():
     nt.eq_(rdw.fmt, 'SWC')
     nt.eq_(len(rdw.data_block), 16)
     nt.eq_(np.shape(rdw.data_block), (16, 7))
-    
-    
+
 
 def test_read_swc_basic_with_offset_1():
     '''More normal ID numbering, starting at 1'''
@@ -59,6 +57,7 @@ def test_read_swc_basic_with_offset_1():
     nt.eq_(len(rdw.data_block), 16)
     nt.eq_(np.shape(rdw.data_block), (16, 7))
 
+
 def test_read_swc_basic_with_offset_42():
     '''ID numbering starting at 42'''
     rdw = swc.read(os.path.join(SWC_PATH, 'sequential_trunk_off_42_16pt.swc'))
@@ -66,11 +65,13 @@ def test_read_swc_basic_with_offset_42():
     nt.eq_(len(rdw.data_block), 16)
     nt.eq_(np.shape(rdw.data_block), (16, 7))
 
+
 def test_read_single_neurite():
     rdw = swc.read(os.path.join(SWC_PATH, 'point_soma_single_neurite.swc'))
     nt.eq_(rdw.neurite_root_section_ids(), [1])
     nt.eq_(len(rdw.soma_points()), 1)
     nt.eq_(len(rdw.sections), 2)
+
 
 def test_read_split_soma():
     rdw = swc.read(os.path.join(SWC_PATH, 'split_soma_single_neurites.swc'))
@@ -93,18 +94,3 @@ def test_simple_reversed():
     nt.eq_(rdw.neurite_root_section_ids(), [5, 6])
     nt.eq_(len(rdw.soma_points()), 1)
     nt.eq_(len(rdw.sections), 7)
-    
-def test_custom_type():
-    rdw = swc.read(os.path.join(SWC_PATH, 'custom_type.swc'))
-    nt.eq_(rdw.fmt, 'SWC')
-    nt.eq_(len(rdw.data_block), 53)
-    nt.eq_(np.shape(rdw.data_block), (53, 7))
-    nt.ok_(rdw.data_block[:,4].any() <= 4 and rdw.data_block[:,4].any() >= 0)
-    
-def test_no_soma():
-    rdw = swc.read(os.path.join(SWC_PATH, 'Single_apical_no_soma.swc'), has_soma = False)
-    nt.eq_(rdw.fmt, 'SWC')
-    nt.eq_(len(rdw.data_block), 211)
-    nt.eq_(np.shape(rdw.data_block), (211, 7))
-    nt.assert_not_equal(rdw.data_block[0][4], 0)
-        
