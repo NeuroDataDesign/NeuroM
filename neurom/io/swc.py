@@ -44,7 +44,7 @@ from .datawrapper import DataWrapper
 ID, TYPE, X, Y, Z, R, P = range(7)
 
 
-def read(filename, data_wrapper=DataWrapper, has_soma = True):
+def read(filename, data_wrapper=DataWrapper, has_soma=True):
     '''Read an SWC file and return a tuple of data, format.'''
     '''If a soma point is intended to be there, but is not, create one.'''
 
